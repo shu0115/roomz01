@@ -1,4 +1,8 @@
 Roomz01::Application.routes.draw do
+  resources :tweets
+
+  resources :rooms
+
   get "top/index"
 
   # The priority is based upon order of creation:
