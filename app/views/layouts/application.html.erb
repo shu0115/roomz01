@@ -10,7 +10,10 @@
 
 <% if current_user %>
   <%# ログイン済み %>
-  <%= current_user.screen_name %> : <%= link_to "Logout" , logout_path %>
+  <%= current_user.get_name %>
+  : <%= link_to "Top" , :root %>
+  : <%= link_to "Room" , controller: "rooms" %>
+  : <%= link_to "Logout" , logout_path %>
 <% else %>
   <%# 未ログイン %>
   <%= link_to "Login", "/auth/#{DEFAULT_PROVIDER}" %>

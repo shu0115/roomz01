@@ -11,3 +11,20 @@
  *= require_self
  *= require_tree .
 */
+
+/* テーブル */
+table, tr, th, td {
+  border: 1px solid #aaa;
+  padding: 5px;
+  border-collapse: collapse;
+  border-spacing: 0px;
+}
+
+.search table, .search tr, .search td {
+  border: 0px solid #aaa;
+  padding: 0px;
+}
+
+th {
+  white-space: nowrap;
+}

@@ -1,20 +1,48 @@
-<p id="notice"><%= notice %></p>
 
-<p>
-  <b>User:</b>
-  <%= @room.user_id %>
-</p>
+<h2><%= @room.hash_tag %></h2>
 
-<p>
-  <b>Name:</b>
-  <%= @room.name %>
-</p>
+<%# Tweet作成フォーム %>
+<%= form_for :tweet, url: { action: 'throw', room_id: @room.id } do |f| %>
+  <% if @tweet.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@tweet.errors.count, "error") %> prohibited this room from being saved:</h2>
 
-<p>
-  <b>Hash tag:</b>
-  <%= @room.hash_tag %>
-</p>
+      <ul>
+      <% @tweet.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
 
+  <span class="field">
+    <%= f.label :post %>：<%= f.text_field :post %>
+  </span>
+  
+  <span class="actions">
+    <%= f.submit "Save" %>
+  </span>
+<% end %>
 
-<%= link_to 'Edit', edit_room_path(@room) %> |
-<%= link_to 'Back', rooms_path %>
+<br />
+
+<%# Tweet一覧 %>
+<table>
+  <tr>
+    <th>No.</th>
+    <th>User</th>
+    <th>Post</th>
+    <th></th>
+  </tr>
+
+<% @tweets.each_with_index{ |tweet,index| %>
+  <tr>
+    <td><%= (index+1) %></td>
+    <td align="center"><%= link_to_unless( tweet.user.uid.blank?, image_tag( tweet.user.image, size: "20x20" ), "https://twitter.com/#!/#{tweet.user.uid}", target: "_blank"  ) %></td>
+    <td><%= tweet.post %></td>
+    <td><%= link_to "Delete", { action: 'retract', id: tweet.id, room_id: @room.id }, onClick: "return confirm('No.#{(index+1)} を削除します。よろしいですか？');" %></td>
+  </tr>
+<% } %>
+</table>
+
+<br />

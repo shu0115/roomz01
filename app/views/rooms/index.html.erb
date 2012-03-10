@@ -1,27 +1,48 @@
-<h1>Listing rooms</h1>
+<h1>Rooms</h1>
 
+<%# Room作成フォーム %>
+<%#= render 'form' %>
+<%= form_for :room, url: { action: 'create' } do |f| %>
+  <% if @room.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@room.errors.count, "error") %> prohibited this room from being saved:</h2>
+
+      <ul>
+      <% @room.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <span class="field">
+    <%= f.label :hash_tag %>：<%= f.text_field :hash_tag %>
+  </span>
+  
+  <span class="actions">
+    <%= f.submit "Save" %>
+  </span>
+<% end %>
+
+<br />
+
+<%# Room一覧 %>
 <table>
   <tr>
-    <th>User</th>
-    <th>Name</th>
     <th>Hash tag</th>
-    <th></th>
-    <th></th>
+    <th>Created</th>
     <th></th>
   </tr>
 
 <% @rooms.each do |room| %>
   <tr>
-    <td><%= room.user_id %></td>
-    <td><%= room.name %></td>
-    <td><%= room.hash_tag %></td>
-    <td><%= link_to 'Show', room %></td>
-    <td><%= link_to 'Edit', edit_room_path(room) %></td>
-    <td><%= link_to 'Destroy', room, confirm: 'Are you sure?', method: :delete %></td>
+    <td><%= link_to room.hash_tag, { action: 'show', id: room.id } %></td>
+    <td align="center"><%= link_to_unless( room.user.try(:uid).blank?, image_tag( room.user.try(:image), size: "20x20" ), "https://twitter.com/#!/#{room.user.try(:uid)}", target: "_blank"  ) %></td>
+    <td><% if session[:user_id] == room.user_id %><%= link_to "Delete", { action: 'delete', id: room.id }, onClick: "return confirm('「#{room.hash_tag}」を削除します。よろしいですか？');" %><% end %></td>
   </tr>
 <% end %>
 </table>
 
 <br />
 
-<%= link_to 'New Room', new_room_path %>
+<%#= link_to 'New', new_room_path %>

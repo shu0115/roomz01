@@ -1,83 +1,103 @@
+# coding: utf-8
 class RoomsController < ApplicationController
-  # GET /rooms
-  # GET /rooms.json
+  
+  #-------#
+  # index #
+  #-------#
   def index
-    @rooms = Room.all
-
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @rooms }
-    end
+    @rooms = Room.order( "created_at DESC" ).includes( :user ).all
+    @room = Room.new
   end
-
-  # GET /rooms/1
-  # GET /rooms/1.json
+  
+  #------#
+  # show #
+  #------#
   def show
-    @room = Room.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @room }
-    end
+    @room = Room.where( id: params[:id] ).first
+    @tweets = Tweet.where( room_id: params[:id] ).order( "created_at DESC" ).includes( :user ).all
+    @tweet = Tweet.new
   end
 
-  # GET /rooms/new
-  # GET /rooms/new.json
+=begin
+  #-----#
+  # new #
+  #-----#
   def new
     @room = Room.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @room }
-    end
   end
 
-  # GET /rooms/1/edit
+  #------#
+  # edit #
+  #------#
   def edit
-    @room = Room.find(params[:id])
+    @room = Room.where( id: params[:id] ).first
   end
+=end
 
-  # POST /rooms
-  # POST /rooms.json
+  #--------#
+  # create #
+  #--------#
   def create
-    @room = Room.new(params[:room])
+    @room = Room.new( params[:room] )
+    @room.user_id = session[:user_id]
 
-    respond_to do |format|
-      if @room.save
-        format.html { redirect_to @room, notice: 'Room was successfully created.' }
-        format.json { render json: @room, status: :created, location: @room }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @room.errors, status: :unprocessable_entity }
-      end
+    if @room.save
+      redirect_to( action: "index", notice: 'Roomの作成が完了しました。') and return
+    else
+      redirect_to( action: "index", alert: 'Roomの作成に失敗しました。') and return
     end
   end
 
-  # PUT /rooms/1
-  # PUT /rooms/1.json
+  #--------#
+  # update #
+  #--------#
   def update
-    @room = Room.find(params[:id])
+    @room = Room.where( id: params[:id], user_id: session[:user_id] ).first
 
-    respond_to do |format|
-      if @room.update_attributes(params[:room])
-        format.html { redirect_to @room, notice: 'Room was successfully updated.' }
-        format.json { head :no_content }
-      else
-        format.html { render action: "edit" }
-        format.json { render json: @room.errors, status: :unprocessable_entity }
-      end
+    if @room.update_attributes( params[:room] )
+      redirect_to @room, notice: 'Room was successfully updated.'
+    else
+      render action: "edit"
     end
   end
 
-  # DELETE /rooms/1
-  # DELETE /rooms/1.json
-  def destroy
-    @room = Room.find(params[:id])
+  #--------#
+  # delete #
+  #--------#
+  def delete
+    @room = Room.where( id: params[:id], user_id: session[:user_id] ).first
     @room.destroy
 
-    respond_to do |format|
-      format.html { redirect_to rooms_url }
-      format.json { head :no_content }
-    end
+    redirect_to( action: "index" ) and return
   end
+  
+  #-------#
+  # throw #
+  #-------#
+  # Do Tweet
+  def throw
+    @tweet = Tweet.new( params[:tweet] )
+    @tweet.room_id = params[:room_id]
+    @tweet.user_id = session[:user_id]
+
+    if @tweet.save
+      flash[:notice] = 'ポストが完了しました。'
+    else
+      flash[:alert] = 'ポストが失敗しました。'
+    end
+    
+    redirect_to( action: "show", id: params[:room_id] ) and return
+  end
+
+  #---------#
+  # retract #
+  #---------#
+  # Delete Tweet
+  def retract
+    @tweet = Tweet.where( id: params[:id], user_id: session[:user_id] ).first
+    @tweet.destroy
+
+    redirect_to( action: "show", id: params[:room_id] ) and return
+  end
+
 end
