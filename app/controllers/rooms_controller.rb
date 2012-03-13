@@ -18,7 +18,8 @@ class RoomsController < ApplicationController
     @tweets = Tweet.where( room_id: params[:id] ).order( "created_at DESC" ).includes( :user )
     
     # アイコン配列生成用
-    @tweet_users = @tweets.group( :user_id ).select("user_id, created_at")
+    @tweet_users = @tweets.select( :user_id ).uniq
+    print "[ @tweet_users ] : " ; p @tweet_users ;
     
     # print "[ tweets ] : " ; p tweets ;
     # 
