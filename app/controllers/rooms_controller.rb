@@ -18,8 +18,17 @@ class RoomsController < ApplicationController
     @tweets = Tweet.where( room_id: params[:id] ).order( "created_at DESC" ).includes( :user )
     
     # アイコン配列生成用
-    @tweet_users = @tweets.select( :user_id ).uniq
-    print "[ @tweet_users ] : " ; p @tweet_users ;
+#    @tweet_users = @tweets.select( :user_id ).all
+#    user_ids = @tweets.pluck( :user_id ).uniq
+#    @tweet_users = User.where( id: user_ids )
+#    print "[ @tweet_users ] : " ; p @tweet_users ;
+#    @tweet_users = @tweet_users.uniq
+#    print "[ @tweet_users ] : " ; p @tweet_users ;
+    @tweet_hash = Hash.new{ |hash, key| hash[key] = Hash.new }
+    @tweets.each{ |tweet|
+      @tweet_hash[tweet.user_id][:screen_name] = tweet.user.try(:screen_name)
+      @tweet_hash[tweet.user_id][:image] = tweet.user.try(:image)
+    }
     
     # print "[ tweets ] : " ; p tweets ;
     # 

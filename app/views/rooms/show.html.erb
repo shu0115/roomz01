@@ -27,8 +27,11 @@
 
 <%# アイコン一覧 %>
 <p>
-  <% @tweet_users.each{ |tweet| %>
-    <%= link_to_unless( tweet.user.try(:screen_name).blank?, image_tag( tweet.user.try(:image), size: "20x20" ), "https://twitter.com/#!/#{tweet.user.try(:screen_name)}", target: "_blank"  ) %>
+<%# @tweet_users.each{ |user| %>
+  <% @tweet_hash.each_pair{ |key, value| %>
+    <%#= link_to_unless( user.screen_name.blank?, image_tag( user.image, size: "20x20" ), "https://twitter.com/#!/#{user.screen_name}", target: "_blank"  ) %>
+    <%#= link_to_unless( tweet.user.try(:screen_name).blank?, image_tag( tweet.user.try(:image), size: "20x20" ), "https://twitter.com/#!/#{tweet.user.try(:screen_name)}", target: "_blank"  ) %>
+    <%= link_to_unless( value[:screen_name].blank?, image_tag( value[:image], size: "20x20" ), "https://twitter.com/#!/#{value[:screen_name]}", target: "_blank"  ) %>
   <% } %>
 </p>
 
