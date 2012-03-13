@@ -45,3 +45,6 @@ end
 
 # OmniAuth
 gem 'omniauth-twitter'
+
+# Twitter
+gem 'twitter'

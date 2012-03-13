@@ -76,12 +76,26 @@ class RoomsController < ApplicationController
   #-------#
   # Do Tweet
   def throw
-    @tweet = Tweet.new( params[:tweet] )
-    @tweet.room_id = params[:room_id]
-    @tweet.user_id = session[:user_id]
+    tweet = Tweet.new( params[:tweet] )
+    tweet.room_id = params[:room_id]
+    tweet.user_id = session[:user_id]
 
-    if @tweet.save
+    if tweet.save
       flash[:notice] = 'ポストが完了しました。'
+    
+      # Twitterポスト
+      Twitter.configure do |config|
+        config.consumer_key       = ENV['TWITTER_KEY']
+        config.consumer_secret    = ENV['TWITTER_SECRET']
+        config.oauth_token        = current_user.token
+        config.oauth_token_secret = current_user.secret
+      end
+
+      room = Room.where( id: tweet.room_id ).first
+      twitter_post = "#{tweet.post} #{room.try(:hash_tag)}"
+      
+      twitter_client = Twitter::Client.new
+      twitter_client.update( twitter_post )
     else
       flash[:alert] = 'ポストが失敗しました。'
     end
