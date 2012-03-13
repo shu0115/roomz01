@@ -25,7 +25,12 @@
   <%= @room.hash_tag %>
 <% end %>
 
-<br />
+<%# アイコン一覧 %>
+<p>
+  <% @tweet_users.each{ |tweet| %>
+    <%= link_to_unless( tweet.user.try(:screen_name).blank?, image_tag( tweet.user.try(:image), size: "20x20" ), "https://twitter.com/#!/#{tweet.user.try(:screen_name)}", target: "_blank"  ) %>
+  <% } %>
+</p>
 
 <%# Tweet一覧 %>
 <table>
@@ -40,7 +45,7 @@
 <% @tweets.each_with_index{ |tweet, index| %>
   <tr>
     <td><%= (index+1) %></td>
-    <td align="center"><%= link_to_unless( tweet.user.uid.blank?, image_tag( tweet.user.image, size: "20x20" ), "https://twitter.com/#!/#{tweet.user.uid}", target: "_blank"  ) %></td>
+    <td align="center"><%= link_to_unless( tweet.user.try(:screen_name).blank?, image_tag( tweet.user.try(:image), size: "20x20" ), "https://twitter.com/#!/#{tweet.user.try(:screen_name)}", target: "_blank"  ) %></td>
     <td><%= tweet.post %></td>
     <td><%= tweet.created_at.strftime("%Y/%m/%d %H:%M:%S") %></td>
     <td><% if session[:user_id] == tweet.user_id %><%= link_to "Delete", { action: 'retract', id: tweet.id, room_id: @room.id }, onClick: "return confirm('「#{tweet.post}」を削除します。よろしいですか？');" %><% end %></td>

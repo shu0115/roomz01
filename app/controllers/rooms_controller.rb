@@ -14,7 +14,18 @@ class RoomsController < ApplicationController
   #------#
   def show
     @room = Room.where( id: params[:id] ).first
-    @tweets = Tweet.where( room_id: params[:id] ).order( "created_at DESC" ).includes( :user ).all
+#    @tweets = Tweet.where( room_id: params[:id] ).order( "created_at DESC" ).includes( :user ).all
+    @tweets = Tweet.where( room_id: params[:id] ).order( "created_at DESC" ).includes( :user )
+    
+    # アイコン配列生成用
+    @tweet_users = @tweets.group( :user_id ).select("user_id")
+    
+    # print "[ tweets ] : " ; p tweets ;
+    # 
+    # tweets.each{ |tweet|
+    #   print "[ image ] : " ; p tweet.user.try(:image) ;
+    # }
+    
     @tweet = Tweet.new
   end
 
@@ -100,6 +111,11 @@ class RoomsController < ApplicationController
       flash[:alert] = 'ポストが失敗しました。'
     end
     
+    redirect_to( action: "show", id: params[:room_id] ) and return
+  rescue => ex
+    print "[ ex ] : " ; p ex ;
+    print "[ ex.message ] : " ; p ex.message ;
+    flash[:alert] = ex.message
     redirect_to( action: "show", id: params[:room_id] ) and return
   end
 

@@ -19,6 +19,15 @@
   <%= link_to "Login", "/auth/#{DEFAULT_PROVIDER}" %>
 <% end %>
 
+<%# 通知／エラーメッセージ %>
+<% unless flash[:notice].blank? %>
+  <p style="color: green;"><%=raw flash[:notice] %></p>
+<% end %>
+
+<% unless flash[:alert].blank? %>
+  <p style="color: red;"><%=raw flash[:alert] %></p>
+<% end %>
+  
 <%= yield %>
 
 </body>
