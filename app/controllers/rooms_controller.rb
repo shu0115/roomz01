@@ -9,35 +9,24 @@ class RoomsController < ApplicationController
     @room = Room.new
   end
   
+=begin
   #------#
   # show #
   #------#
   def show
     @room = Room.where( id: params[:id] ).first
-#    @tweets = Tweet.where( room_id: params[:id] ).order( "created_at DESC" ).includes( :user ).all
     @tweets = Tweet.where( room_id: params[:id] ).order( "created_at DESC" ).includes( :user )
     
     # アイコン配列生成用
-#    @tweet_users = @tweets.select( :user_id ).all
-#    user_ids = @tweets.pluck( :user_id ).uniq
-#    @tweet_users = User.where( id: user_ids )
-#    print "[ @tweet_users ] : " ; p @tweet_users ;
-#    @tweet_users = @tweet_users.uniq
-#    print "[ @tweet_users ] : " ; p @tweet_users ;
     @tweet_hash = Hash.new{ |hash, key| hash[key] = Hash.new }
     @tweets.each{ |tweet|
       @tweet_hash[tweet.user_id][:screen_name] = tweet.user.try(:screen_name)
       @tweet_hash[tweet.user_id][:image] = tweet.user.try(:image)
     }
     
-    # print "[ tweets ] : " ; p tweets ;
-    # 
-    # tweets.each{ |tweet|
-    #   print "[ image ] : " ; p tweet.user.try(:image) ;
-    # }
-    
     @tweet = Tweet.new
   end
+=end
 
 =begin
   #-----#
@@ -46,14 +35,14 @@ class RoomsController < ApplicationController
   def new
     @room = Room.new
   end
+=end
 
   #------#
   # edit #
   #------#
   def edit
-    @room = Room.where( id: params[:id] ).first
+    @room = Room.where( user_id: session[:user_id], id: params[:id] ).first
   end
-=end
 
   #--------#
   # create #
@@ -63,9 +52,9 @@ class RoomsController < ApplicationController
     @room.user_id = session[:user_id]
 
     if @room.save
-      redirect_to( action: "index", notice: 'Roomの作成が完了しました。') and return
+      redirect_to( { action: "index" } ) and return
     else
-      redirect_to( action: "index", alert: 'Roomの作成に失敗しました。') and return
+      redirect_to( { action: "index" }, alert: 'Roomの作成に失敗しました。') and return
     end
   end
 
@@ -73,12 +62,15 @@ class RoomsController < ApplicationController
   # update #
   #--------#
   def update
-    @room = Room.where( id: params[:id], user_id: session[:user_id] ).first
+    update_room = params[:room]
+    update_room[:twitter_synchro] = false unless update_room[:twitter_synchro] == "true"
+    
+    room = Room.where( id: params[:id], user_id: session[:user_id] ).first
 
-    if @room.update_attributes( params[:room] )
-      redirect_to @room, notice: 'Room was successfully updated.'
+    unless room.update_attributes( update_room )
+      redirect_to( { action: "edit", id: room.id }, alert: 'Roomの作成に失敗しました。' ) and return
     else
-      render action: "edit"
+      redirect_to( { action: "index" } ) and return
     end
   end
 
@@ -91,7 +83,8 @@ class RoomsController < ApplicationController
 
     redirect_to( action: "index" ) and return
   end
-  
+
+=begin
   #-------#
   # throw #
   #-------#
@@ -139,5 +132,6 @@ class RoomsController < ApplicationController
 
     redirect_to( action: "show", id: params[:room_id] ) and return
   end
+=end
 
 end

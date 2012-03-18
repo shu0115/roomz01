@@ -1,25 +1,78 @@
-<h1>Listing tweets</h1>
 
+<h2><%= link_to @room.hash_tag, { action: 'index', room_id: @room.id } %></h2>
+
+<%# Tweet作成フォーム %>
+<%= form_for :tweet, url: { action: 'create', room_id: @room.id } do |f| %>
+  <% if @tweet.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@tweet.errors.count, "error") %> prohibited this room from being saved:</h2>
+
+      <ul>
+      <% @tweet.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%# ハッシュタグ前付加 %>
+  <% if @room.hash_tag_position == "before" %>
+    <span id="hash_tag"><%= @room.hash_tag %></span><br />
+  <% end %>
+  
+  <%# 投稿テキストエリア %>
+  <span class="field"><%= f.text_area :post, rows: "5", cols: "50", onKeyup: "str_count(value);" %></span>
+  
+  <br />
+
+  <%# ハッシュタグ後付加 %>
+  <% if @room.hash_tag_position == "after" %>
+    <span id="hash_tag"><%= @room.hash_tag %></span><br />
+  <% end %>
+
+  <%# Twitter連携 %>
+  Twitter連携：
+  <% if @room.twitter_synchro == true %>
+    ON<br />
+  <% else %>
+    OFF<br />
+  <% end %>
+  
+  <%# 文字数カウント %>
+  <span id="str_length"><%= @str_count %>文字</span><br />
+  
+  <%# Postボタン %>
+  <span class="actions"><%= f.submit "Post", disable_with: "Post" %></span><br />
+<% end %>
+
+<%# アイコン一覧 %>
+<p>
+  <% @tweet_hash.each_pair{ |key, value| %>
+    <%= link_to_unless( value[:screen_name].blank?, image_tag( value[:image], size: "20x20" ), "https://twitter.com/#!/#{value[:screen_name]}", target: "_blank"  ) %>
+  <% } %>
+</p>
+
+<%# Tweet一覧 %>
+<% if @tweets.length > 0 %>
 <table>
   <tr>
+    <th>No.</th>
     <th>User</th>
     <th>Post</th>
-    <th></th>
-    <th></th>
+    <th>Time</th>
     <th></th>
   </tr>
 
-<% @tweets.each do |tweet| %>
+<% @tweets.each_with_index{ |tweet, index| %>
   <tr>
-    <td><%= tweet.user_id %></td>
-    <td><%= tweet.post %></td>
-    <td><%= link_to 'Show', tweet %></td>
-    <td><%= link_to 'Edit', edit_tweet_path(tweet) %></td>
-    <td><%= link_to 'Destroy', tweet, confirm: 'Are you sure?', method: :delete %></td>
+    <td><%= (index + 1) %></td>
+    <td align="center"><%= link_to_unless( tweet.user.try(:screen_name).blank?, image_tag( tweet.user.try(:image), size: "20x20" ), "https://twitter.com/#!/#{tweet.user.try(:screen_name)}", target: "_blank"  ) %></td>
+    <td><%= simple_format(tweet.post) %></td>
+    <td><%= tweet.created_at.strftime("%Y/%m/%d %H:%M:%S") %></td>
+    <td><% if session[:user_id] == tweet.user_id %><%= link_to "Delete", { action: 'delete', id: tweet.id, room_id: @room.id }, onClick: "return confirm('「No.#{(index + 1)}」を削除します。よろしいですか？');" %><% end %></td>
   </tr>
-<% end %>
+<% } %>
 </table>
+<% end %>
 
 <br />
-
-<%= link_to 'New Tweet', new_tweet_path %>

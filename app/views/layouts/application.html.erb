@@ -5,11 +5,25 @@
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
+
+  <%# 文字数カウント %>
+  <script type="text/javascript">
+  <!-- 
+    function str_count(str){
+      var hash_tag = document.getElementById('hash_tag').innerHTML
+      var val = str.replace(/\r\n/g, " ");
+
+      document.getElementById('str_length').innerText = hash_tag.length + val.length + 1 + "文字";
+      document.getElementById('str_length').textContent = hash_tag.length + val.length + 1 + "文字"; // Firefox用
+    }
+  //-->
+  </script>
 </head>
 <body>
 
 <% if current_user %>
   <%# ログイン済み %>
+  <%= link_to_unless( current_user.screen_name.blank?, image_tag( current_user.image, size: "20x20" ), "https://twitter.com/#!/#{current_user.screen_name}", target: "_blank" ) %>
   <%= current_user.get_name %>
   : <%= link_to "Top" , :root %>
   : <%= link_to "Room" , controller: "rooms" %>

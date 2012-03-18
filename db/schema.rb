@@ -11,14 +11,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120313145412) do
+ActiveRecord::Schema.define(:version => 20120318091044) do
 
   create_table "rooms", :force => true do |t|
     t.integer  "user_id"
-    t.string   "name"
     t.string   "hash_tag"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
+    t.string   "hash_tag_position", :default => "after"
+    t.boolean  "twitter_synchro",   :default => true
   end
 
   create_table "tweets", :force => true do |t|

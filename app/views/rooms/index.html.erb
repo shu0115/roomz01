@@ -1,7 +1,6 @@
 <h1>Rooms</h1>
 
 <%# Room作成フォーム %>
-<%#= render 'form' %>
 <%= form_for :room, url: { action: 'create' } do |f| %>
   <% if @room.errors.any? %>
     <div id="error_explanation">
@@ -16,7 +15,7 @@
   <% end %>
 
   <span class="field">
-    <%= f.label :hash_tag %>：<%= f.text_field :hash_tag %>
+    <%= f.label :hash_tag, "HashTag" %>：<%= f.text_field :hash_tag %>
   </span>
   
   <span class="actions">
@@ -31,14 +30,33 @@
   <tr>
     <th>Hash tag</th>
     <th>Created</th>
+    <th>Position</th>
+    <th>Synchro</th>
+    <th></th>
     <th></th>
   </tr>
 
 <% @rooms.each do |room| %>
   <tr>
-    <td><%= link_to room.hash_tag, { action: 'show', id: room.id } %></td>
+    <%# ハッシュタグ %>
+    <td><%= link_to room.hash_tag, { controller: "tweets", action: 'index', room_id: room.id } %></td>
+    
+    <%# 作成ユーザ %>
     <td align="center"><%= link_to_unless( room.user.screen_name.blank?, image_tag( room.user.image, size: "20x20" ), "https://twitter.com/#!/#{room.user.screen_name}", target: "_blank"  ) unless room.user.blank? %></td>
-    <td><% if session[:user_id] == room.user_id %><%= link_to "Delete", { action: 'delete', id: room.id }, onClick: "return confirm('「#{room.hash_tag}」を削除します。よろしいですか？');" %><% end %></td>
+    
+    <%# ハッシュタグ付加位置 %>
+    <td><%= room.hash_tag_position %></td>
+    
+    <%# Twitter同時投稿 %>
+    <td><%= room.twitter_synchro %></td>
+    
+    <% if session[:user_id] == room.user_id %>
+      <td><%= link_to "Edit", { action: 'edit', id: room.id } %></td>
+      <td><%= link_to "Delete", { action: 'delete', id: room.id }, onClick: "return confirm('「#{room.hash_tag}」を削除します。よろしいですか？');" %></td>
+    <% else %>
+      <td></td>
+      <td></td>
+    <% end %>
   </tr>
 <% end %>
 </table>
