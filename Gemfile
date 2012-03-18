@@ -1,4 +1,5 @@
-source 'https://rubygems.org'
+#source 'https://rubygems.org'
+source 'http://production.cf.rubygems.org/'
 
 gem 'rails', '3.2.2'
 
@@ -40,7 +41,6 @@ gem 'jquery-rails'
 # For Heroku
 group :production do
   gem 'pg'
-#  gem 'therubyracer-heroku', '0.8.1.pre3' # you will need this too
 end
 
 # OmniAuth
@@ -48,3 +48,6 @@ gem 'omniauth-twitter'
 
 # Twitter
 gem 'twitter'
+
+# AutoLink
+gem "rails_autolink", "~> 1.0.4"
