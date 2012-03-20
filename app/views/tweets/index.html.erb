@@ -68,7 +68,7 @@
     <td><%= (index + 1) %></td>
     <td align="center"><%= link_to_unless( tweet.user.try(:screen_name).blank?, image_tag( tweet.user.try(:image), size: "20x20" ), "https://twitter.com/#!/#{tweet.user.try(:screen_name)}", target: "_blank"  ) %></td>
     <td><%= auto_link( simple_format(tweet.post), html: { target: '_blank' } ) %></td>
-    <td><%= tweet.created_at.strftime("%Y/%m/%d %H:%M:%S") %></td>
+    <td style="white-space: nowrap;"><%= tweet.created_at.strftime("%Y/%m/%d %H:%M:%S") %></td>
     <td><% if session[:user_id] == tweet.user_id %><%= link_to "Delete", { action: 'delete', id: tweet.id, room_id: @room.id }, onClick: "return confirm('「No.#{(index + 1)}」を削除します。よろしいですか？');" %><% end %></td>
   </tr>
 <% } %>
