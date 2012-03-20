@@ -17,17 +17,17 @@
 
   <%# ハッシュタグ前付加 %>
   <% if @room.hash_tag_position == "before" %>
-    <span id="hash_tag"><%= @room.hash_tag %></span><br />
+    <span id="hash_tag"><%= link_to( @room.hash_tag, "https://twitter.com/#!/search/realtime/#{CGI.escape(@room.hash_tag)}", target: "_blank"  ) %></span><br />
   <% end %>
   
   <%# 投稿テキストエリア %>
-  <span class="field"><%= f.text_area :post, rows: "5", cols: "50", onKeyup: "str_count(value);" %></span>
+  <span class="field"><%= f.text_area :post, rows: "7", cols: "80", onKeyup: "str_count(value);" %></span>
   
   <br />
 
   <%# ハッシュタグ後付加 %>
   <% if @room.hash_tag_position == "after" %>
-    <span id="hash_tag"><%= @room.hash_tag %></span><br />
+    <span id="hash_tag"><%= link_to( @room.hash_tag, "https://twitter.com/#!/search/realtime/#{CGI.escape(@room.hash_tag)}", target: "_blank"  ) %></span><br />
   <% end %>
 
   <%# Twitter連携 %>
@@ -65,11 +65,11 @@
 
 <% @tweets.each_with_index{ |tweet, index| %>
   <tr>
-    <td><%= (index + 1) %></td>
-    <td align="center"><%= link_to_unless( tweet.user.try(:screen_name).blank?, image_tag( tweet.user.try(:image), size: "20x20" ), "https://twitter.com/#!/#{tweet.user.try(:screen_name)}", target: "_blank"  ) %></td>
-    <td><%= auto_link( simple_format(tweet.post), html: { target: '_blank' } ) %></td>
-    <td style="white-space: nowrap;"><%= tweet.created_at.strftime("%Y/%m/%d %H:%M:%S") %></td>
-    <td><% if session[:user_id] == tweet.user_id %><%= link_to "Delete", { action: 'delete', id: tweet.id, room_id: @room.id }, onClick: "return confirm('「No.#{(index + 1)}」を削除します。よろしいですか？');" %><% end %></td>
+    <%# No. %><td><%= (index + 1) %></td>
+    <%# User %><td align="center"><%= link_to_unless( tweet.user.try(:screen_name).blank?, image_tag( tweet.user.try(:image), size: "20x20" ), "https://twitter.com/#!/#{tweet.user.try(:screen_name)}", target: "_blank"  ) %></td>
+    <%# Post %><td><%= auto_link( simple_format(tweet.post), html: { target: '_blank' } ) %></td>
+    <%# Time %><td style="white-space: nowrap;"><%= tweet.created_at.strftime("%Y/%m/%d %H:%M:%S") %></td>
+    <%# Delete %><td><% if session[:user_id] == tweet.user_id %><%= link_to "Delete", { action: 'delete', id: tweet.id, room_id: @room.id }, onClick: "return confirm('「No.#{(index + 1)}」を削除します。よろしいですか？');" %><% end %></td>
   </tr>
 <% } %>
 </table>
