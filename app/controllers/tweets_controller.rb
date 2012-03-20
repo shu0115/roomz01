@@ -17,6 +17,9 @@ class TweetsController < ApplicationController
     
     @tweet = Tweet.new
     @str_count = @room.hash_tag.length + 1
+
+    # Twitterから取得
+    @get_tweets = Twitter.search( "#{@room.hash_tag} -rt", lang: "ja", result_type: "recent" )
   end
 
   #--------#

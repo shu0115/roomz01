@@ -68,11 +68,42 @@
     <%# No. %><td><%= (index + 1) %></td>
     <%# User %><td align="center"><%= link_to_unless( tweet.user.try(:screen_name).blank?, image_tag( tweet.user.try(:image), size: "20x20" ), "https://twitter.com/#!/#{tweet.user.try(:screen_name)}", target: "_blank"  ) %></td>
     <%# Post %><td><%= auto_link( simple_format(tweet.post), html: { target: '_blank' } ) %></td>
-    <%# Time %><td style="white-space: nowrap;"><%= tweet.created_at.strftime("%Y/%m/%d %H:%M:%S") %></td>
+    <%# Time %><td style="white-space: nowrap;"><%= tweet.created_at.strftime("%Y/%m/%d %H:%M:%S") unless tweet.created_at.blank? %></td>
     <%# Delete %><td><% if session[:user_id] == tweet.user_id %><%= link_to "Delete", { action: 'delete', id: tweet.id, room_id: @room.id }, onClick: "return confirm('「No.#{(index + 1)}」を削除します。よろしいですか？');" %><% end %></td>
   </tr>
 <% } %>
 </table>
 <% end %>
 
+<br />
+<br />
+<br />
+
+<h3 style="display: inline;">From Twitter</h3><br />
+
+<span id="hash_tag"><%= link_to( @room.hash_tag, "https://twitter.com/#!/search/realtime/#{CGI.escape(@room.hash_tag)}", target: "_blank"  ) %></span><br />
+
+<%# Tweet検索結果一覧 %>
+<% if @get_tweets.length > 0 %>
+<table>
+  <tr>
+    <th>No.</th>
+    <th>User</th>
+    <th>Post</th>
+    <th>Time</th>
+  </tr>
+
+<% @get_tweets.each_with_index{ |tweet, index| %>
+  <tr>
+    <%# No. %><td><%= (index + 1) %></td>
+    <%# User %><td align="center"><%= link_to_unless( tweet.from_user.blank?, image_tag( tweet.profile_image_url, size: "20x20" ), "https://twitter.com/#!/#{tweet.from_user}", target: "_blank"  ) %></td>
+    <%# Post %><td><%= auto_link( simple_format(tweet.text), html: { target: '_blank' } ) %></td>
+    <%# Time %><td style="white-space: nowrap;"><%= link_to_unless( tweet.created_at.blank?, tweet.created_at.strftime("%Y/%m/%d %H:%M:%S"), "https://twitter.com/#!/#{tweet.from_user}/status/#{tweet.id}", target: "_blank" )  unless tweet.created_at.blank? %><%#= tweet.created_at.strftime("%Y/%m/%d %H:%M:%S") unless tweet.created_at.blank? %></td>
+  </tr>
+<% } %>
+</table>
+<% end %>
+
+<br />
+<br />
 <br />
