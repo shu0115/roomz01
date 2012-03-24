@@ -18,7 +18,7 @@ https://dev.twitter.com/apps/new
   Name: [ (アプリケーションの名前) ]
   Description: [ (アプリケーションの説明) ]
   WebSite: [ http://0.0.0.0:3000/ ]
-  Callback URL: [ 空欄でOK ]
+  Callback URL: [ http://0.0.0.0:3000/ ] ※登録しないと動かない
 
   □ Yes, I agree <= チェック
 
