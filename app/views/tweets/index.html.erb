@@ -80,7 +80,7 @@
     <%# User %>
     <td align="center">
       <% unless tweet.user_image_url.blank? %>
-        <%= link_to_unless( tweet.user_image_url.blank?, image_tag( tweet.user_image_url, size: "20x20" ), "https://twitter.com/#!/#{tweet.user.try(:screen_name)}", target: "_blank" ) %>
+        <%= link_to_unless( tweet.from_twitter_user.blank?, image_tag( tweet.user_image_url, size: "20x20" ), "https://twitter.com/#!/#{tweet.from_twitter_user}", target: "_blank" ) %>
       <% end %>
     </td>
     

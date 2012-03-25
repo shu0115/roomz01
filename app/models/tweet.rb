@@ -43,6 +43,7 @@ class Tweet < ActiveRecord::Base
   #------------------------#
   # self.get_twitter_param #
   #------------------------#
+  # Twitterツイート取得パラメータ設定
   def self.get_twitter_param( room )
     param_hash = Hash.new
     
@@ -59,7 +60,7 @@ class Tweet < ActiveRecord::Base
   #--------------------#
   # self.absorb_tweets #
   #--------------------#
-  # Twitterツイート取得
+  # Twitterツイート取得／登録
   def self.absorb_tweets( room )
     ActiveRecord::Base.transaction do
       page = 1
