@@ -24,6 +24,22 @@ class Tweet < ActiveRecord::Base
     return icon_hash
   end
   
+  #------------------------#
+  # self.get_twitter_param #
+  #------------------------#
+  def self.get_twitter_param( room )
+    param_hash = Hash.new
+    
+    param_hash[:search_query] = room.search_query.presence || room.hash_tag
+    param_hash[:options] = Hash.new
+    param_hash[:options][:lang] = "ja"
+    param_hash[:options][:result_type] = "recent"
+    param_hash[:options][:rpp] = 100
+    param_hash[:options][:page] = 1
+    
+    return param_hash
+  end
+  
   #--------------------#
   # self.absorb_tweets #
   #--------------------#

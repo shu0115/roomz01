@@ -21,7 +21,8 @@ class RoomsController < ApplicationController
     @icon_hash = Tweet.get_user_icons( @room )
     
     # Twitterから取得
-    @get_tweets = Twitter.search( "#{@room.hash_tag} -rt", lang: "ja", result_type: "recent", rpp: 100 )
+    get_twitter_hash = Tweet.get_twitter_param( @room )
+    @get_tweets = Twitter.search( get_twitter_hash[:search_query], lang: get_twitter_hash[:options][:lang], result_type: get_twitter_hash[:options][:result_type], rpp: get_twitter_hash[:options][:rpp], page: get_twitter_hash[:options][:page] )
     
     # TwitterのツイートをRoomzへ登録
     if @room.worker_flag == true
@@ -54,13 +55,13 @@ class RoomsController < ApplicationController
   # update #
   #--------#
   def update
-#    update_room = params[:room]
+    update_room = params[:room]
 #    update_room[:twitter_synchro] = false unless update_room[:twitter_synchro] == "true"
+    update_room[:worker_flag] = false unless update_room[:worker_flag] == "true"
     
     room = Room.where( id: params[:id], user_id: session[:user_id] ).first
 
-#    unless room.update_attributes( update_room )
-    unless room.update_attributes( params[:room] )
+    unless room.update_attributes( update_room )
       redirect_to( { action: "edit", id: room.id }, alert: 'Roomの更新に失敗しました。' ) and return
     else
       redirect_to( { action: "index" } ) and return
