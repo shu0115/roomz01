@@ -26,16 +26,29 @@ class TweetsController < ApplicationController
   # create #
   #--------#
   def create
+    position_flag = params[:position_flag]
+    
     tweet = Tweet.new( params[:tweet] )
     tweet.room_id = params[:room_id]
     tweet.user_id = session[:user_id]
     
     room = Room.where( id: tweet.room_id ).first
     
-    if room.hash_tag_position == "before"
+    # ハッシュタグ付加
+    if position_flag == "before"
+      # 前付け
       tweet.post = "#{room.try(:hash_tag)} #{tweet.post}"
-    elsif room.hash_tag_position == "after"
+    elsif position_flag == "after"
+      # 後付け
       tweet.post = "#{tweet.post} #{room.try(:hash_tag)}"
+    else
+      if room.hash_tag_position == "before"
+        # 前付け
+        tweet.post = "#{room.try(:hash_tag)} #{tweet.post}"
+      elsif room.hash_tag_position == "after"
+        # 後付け
+        tweet.post = "#{tweet.post} #{room.try(:hash_tag)}"
+      end
     end
     
     ActiveRecord::Base.transaction do

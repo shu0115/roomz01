@@ -18,6 +18,8 @@
   <%# ハッシュタグ前付加 %>
   <% if @room.hash_tag_position == "before" %>
     <span id="hash_tag"><%= link_to( @room.hash_tag, "https://twitter.com/#!/search/realtime/#{CGI.escape(@room.hash_tag)}", target: "_blank"  ) %></span><br />
+  <% else %>
+  <%= check_box_tag "position_flag", "before", false %><%= label_tag "position_flag", " ハッシュタグを前に付ける" %><br />
   <% end %>
   
   <%# 投稿テキストエリア %>
@@ -28,6 +30,8 @@
   <%# ハッシュタグ後付加 %>
   <% if @room.hash_tag_position == "after" %>
     <span id="hash_tag"><%= link_to( @room.hash_tag, "https://twitter.com/#!/search/realtime/#{CGI.escape(@room.hash_tag)}", target: "_blank"  ) %></span><br />
+  <% else %>
+    <%= check_box_tag "position_flag", "after", false %><%= label_tag "position_flag", " ハッシュタグを後に付ける" %><br />
   <% end %>
 
   <%# Twitter連携 %>
