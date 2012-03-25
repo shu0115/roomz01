@@ -25,9 +25,9 @@ class RoomsController < ApplicationController
     @get_tweets = Twitter.search( get_twitter_hash[:search_query], lang: get_twitter_hash[:options][:lang], result_type: get_twitter_hash[:options][:result_type], rpp: get_twitter_hash[:options][:rpp], page: get_twitter_hash[:options][:page] )
     
     # TwitterのツイートをRoomzへ登録
-    if @room.worker_flag == true
-      Tweet.absorb_tweets( @room )
-    end
+    # if @room.worker_flag == true
+    #   Tweet.absorb_tweets( @room )
+    # end
   end
   
   #------#
