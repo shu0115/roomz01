@@ -15,14 +15,14 @@ class RoomsController < ApplicationController
   def show
     @room = Room.where( id: params[:id] ).first
     @tweets = Tweet.where( room_id: params[:id] ).order( "created_at DESC" ).includes( :user )
-
-    # アイコン配列生成用
-#    @tweet_hash = Tweet.get_user_icons( @tweets )
-    @icon_hash = Tweet.get_user_icons( @room )
     
     # Twitterから取得
     get_twitter_hash = Tweet.get_twitter_param( @room )
     @get_tweets = Twitter.search( get_twitter_hash[:search_query], lang: get_twitter_hash[:options][:lang], result_type: get_twitter_hash[:options][:result_type], rpp: get_twitter_hash[:options][:rpp], page: get_twitter_hash[:options][:page] )
+
+    # アイコン配列生成用
+#    @tweet_hash = Tweet.get_user_icons( @tweets )
+    @icon_hash = Tweet.get_user_icons_from_tweet( @get_tweets )
     
     # TwitterのツイートをRoomzへ登録
     # if @room.worker_flag == true

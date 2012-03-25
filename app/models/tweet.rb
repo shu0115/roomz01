@@ -9,9 +9,8 @@ class Tweet < ActiveRecord::Base
   #---------------------#
   # self.get_user_icons #
   #---------------------#
-#  def self.get_user_icons( tweets )
+  # アイコン一覧生成
   def self.get_user_icons( room )
-#    tweet_hash = Hash.new{ |hash, key| hash[key] = Hash.new }
     icon_hash = Hash.new{ |hash, key| hash[key] = Hash.new }
     
     tweets = Tweet.where( room_id: room.id ).select( "from_twitter_user_id, from_twitter_user, user_image_url" ).order( "created_at DESC" ).limit( 1000 ).all
@@ -19,6 +18,23 @@ class Tweet < ActiveRecord::Base
     tweets.each{ |tweet|
       icon_hash[tweet.from_twitter_user_id][:screen_name] = tweet.from_twitter_user
       icon_hash[tweet.from_twitter_user_id][:image] = tweet.user_image_url
+    }
+    
+    return icon_hash
+  end
+  
+  #--------------------------------#
+  # self.get_user_icons_from_tweet #
+  #--------------------------------#
+  # アイコン一覧生成(Twitterから)
+  def self.get_user_icons_from_tweet( tweets )
+    icon_hash = Hash.new{ |hash, key| hash[key] = Hash.new }
+    
+#    tweets = Tweet.where( room_id: room.id ).select( "from_twitter_user_id, from_twitter_user, user_image_url" ).order( "created_at DESC" ).limit( 1000 ).all
+    
+    tweets.each{ |tweet|
+      icon_hash[tweet.from_user_id][:screen_name] = tweet.from_user
+      icon_hash[tweet.from_user_id][:image] = tweet.profile_image_url
     }
     
     return icon_hash

@@ -8,10 +8,6 @@ class TweetsController < ApplicationController
     @room = Room.where( id: params[:room_id] ).first
     @tweets = Tweet.where( room_id: params[:room_id] ).order( "created_at DESC" ).includes( :user )
     
-    # アイコン配列生成用
-#    @tweet_hash = Tweet.get_user_icons( @tweets )
-    @icon_hash = Tweet.get_user_icons( @room )
-    
     @tweet = Tweet.new
     @str_count = @room.hash_tag.length + 1
 
@@ -22,6 +18,10 @@ class TweetsController < ApplicationController
     if @room.worker_flag == true
       Tweet.absorb_tweets( @room )
     end
+    
+    # アイコン配列生成用
+#    @tweet_hash = Tweet.get_user_icons( @tweets )
+    @icon_hash = Tweet.get_user_icons( @room )
   end
 
   #--------#
