@@ -15,7 +15,7 @@
 
   <span class="field">
     <%= f.label :hash_tag, "HashTag" %>：<br />
-    <%= f.text_field :hash_tag %><br />
+    <%= f.text_field :hash_tag, size: 30 %><br />
   </span>
   
   <br />
@@ -28,14 +28,32 @@
   </span>
   
   <br />
-  
+
+<% if false %>
   <span class="field">
     <%= f.check_box( :twitter_synchro, { checked: @room.twitter_synchro }, true, false ) %>
     <%= f.label :twitter_synchro, "Twitter同時投稿" %><br />
   </span>
   
   <br />
+<% end %>
+
+  <span class="field">
+    <%= f.label :search_query, "SearchQuery" %>：<br />
+    <%= f.text_field :search_query, size: 50 %><br />
+  </span>
   
+  <br />
+  
+<% if current_user.uid == "14369656" %>
+  <span class="field">
+    <%= f.check_box( :worker_flag, { checked: @room.worker_flag }, true, false ) %>
+    <%= f.label :worker_flag, "Twitterツイート取得" %><br />
+  </span>
+  
+  <br />
+<% end %>
+
   <span class="actions">
     <%= f.submit "Save" %>
   </span>

@@ -51,10 +51,13 @@
 
 <%# アイコン一覧 %>
 <p>
-  <% @tweet_hash.each_pair{ |key, value| %>
+メンバーズ：<br />
+  <% @icon_hash.each_pair{ |key, value| %>
     <%= link_to_unless( value[:screen_name].blank?, image_tag( value[:image], size: "20x20" ), "https://twitter.com/#!/#{value[:screen_name]}", target: "_blank"  ) %>
   <% } %>
 </p>
+
+総ツイート数：<%= @tweets.length %>
 
 <%# Tweet一覧 %>
 <% if @tweets.length > 0 %>
@@ -70,15 +73,17 @@
 <% @tweets.each_with_index{ |tweet, index| %>
   <tr>
     <%# No. %><td><%= (index + 1) %></td>
-    <%# User %><td align="center"><%= link_to_unless( tweet.user.try(:screen_name).blank?, image_tag( tweet.user.try(:image), size: "20x20" ), "https://twitter.com/#!/#{tweet.user.try(:screen_name)}", target: "_blank"  ) %></td>
+    <%# User %><td align="center"><%= link_to_unless( tweet.user_image_url.blank?, image_tag( tweet.user_image_url, size: "20x20" ), "https://twitter.com/#!/#{tweet.user.try(:screen_name)}", target: "_blank"  ) %></td>
     <%# Post %><td><%= auto_link( simple_format(tweet.post), html: { target: '_blank' } ) %></td>
-    <%# Time %><td style="white-space: nowrap;"><%= tweet.created_at.strftime("%Y/%m/%d %H:%M:%S") unless tweet.created_at.blank? %></td>
+    <%# Time %><td style="white-space: nowrap;"><%= link_to_unless( tweet.created_at.blank?, tweet.created_at.strftime("%Y/%m/%d %H:%M:%S"), "https://twitter.com/#!/#{tweet.from_twitter_user}/status/#{tweet.from_twitter_id}", target: "_blank" )  unless tweet.created_at.blank? %></td>
     <%# Delete %><td><% if session[:user_id] == tweet.user_id %><%= link_to "Delete", { action: 'delete', id: tweet.id, room_id: @room.id }, onClick: "return confirm('「No.#{(index + 1)}」を削除します。よろしいですか？');" %><% end %></td>
   </tr>
 <% } %>
 </table>
 <% end %>
 
+<% if false %>
+<!--
 <br />
 <br />
 <br />
@@ -106,6 +111,8 @@
   </tr>
 <% } %>
 </table>
+<% end %>
+-->
 <% end %>
 
 <br />

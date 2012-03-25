@@ -11,23 +11,32 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120318091044) do
+ActiveRecord::Schema.define(:version => 20120325085329) do
 
   create_table "rooms", :force => true do |t|
     t.integer  "user_id"
     t.string   "hash_tag"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
-    t.string   "hash_tag_position", :default => "after"
-    t.boolean  "twitter_synchro",   :default => true
+    t.datetime "created_at",                                          :null => false
+    t.datetime "updated_at",                                          :null => false
+    t.string   "hash_tag_position",              :default => "after"
+    t.boolean  "twitter_synchro",                :default => true
+    t.string   "search_query"
+    t.integer  "last_max_id",       :limit => 8
+    t.datetime "last_tweet_at"
+    t.boolean  "worker_flag",                    :default => false
   end
 
   create_table "tweets", :force => true do |t|
     t.integer  "user_id"
     t.integer  "room_id"
     t.text     "post"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                          :null => false
+    t.datetime "updated_at",                          :null => false
+    t.string   "from_twitter_image_url"
+    t.integer  "from_twitter_id",        :limit => 8
+    t.integer  "from_twitter_user_id",   :limit => 8
+    t.string   "from_twitter_user"
+    t.string   "user_image_url"
   end
 
   create_table "users", :force => true do |t|

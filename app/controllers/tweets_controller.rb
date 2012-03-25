@@ -9,17 +9,19 @@ class TweetsController < ApplicationController
     @tweets = Tweet.where( room_id: params[:room_id] ).order( "created_at DESC" ).includes( :user )
     
     # アイコン配列生成用
-    @tweet_hash = Hash.new{ |hash, key| hash[key] = Hash.new }
-    @tweets.each{ |tweet|
-      @tweet_hash[tweet.user_id][:screen_name] = tweet.user.try(:screen_name)
-      @tweet_hash[tweet.user_id][:image] = tweet.user.try(:image)
-    }
+#    @tweet_hash = Tweet.get_user_icons( @tweets )
+    @icon_hash = Tweet.get_user_icons( @room )
     
     @tweet = Tweet.new
     @str_count = @room.hash_tag.length + 1
 
     # Twitterから取得
-    @get_tweets = Twitter.search( "#{@room.hash_tag} -rt", lang: "ja", result_type: "recent" )
+#    @get_tweets = Twitter.search( "#{@room.hash_tag} -rt", lang: "ja", result_type: "recent", rpp: 100 )
+
+    # TwitterのツイートをRoomzへ登録
+    if @room.worker_flag == true
+      Tweet.absorb_tweets( @room )
+    end
   end
 
   #--------#
@@ -27,34 +29,38 @@ class TweetsController < ApplicationController
   #--------#
   def create
     position_flag = params[:position_flag]
+    room_id = params[:room_id]
     
     tweet = Tweet.new( params[:tweet] )
-    tweet.room_id = params[:room_id]
-    tweet.user_id = session[:user_id]
+    # tweet.room_id = params[:room_id]
+    # tweet.user_id = session[:user_id]
+    # tweet.user_image_url = current_user.image
+    tweet_text = ""
     
-    room = Room.where( id: tweet.room_id ).first
+#    room = Room.where( id: tweet.room_id ).first
+    room = Room.where( id: room_id ).first
     
     # ハッシュタグ付加
     if position_flag == "before"
       # 前付け
-      tweet.post = "#{room.try(:hash_tag)} #{tweet.post}"
+      tweet_text = "#{room.try(:hash_tag)} #{tweet.post}"
     elsif position_flag == "after"
       # 後付け
-      tweet.post = "#{tweet.post} #{room.try(:hash_tag)}"
+      tweet_text = "#{tweet.post} #{room.try(:hash_tag)}"
     else
       if room.hash_tag_position == "before"
         # 前付け
-        tweet.post = "#{room.try(:hash_tag)} #{tweet.post}"
+        tweet_text = "#{room.try(:hash_tag)} #{tweet.post}"
       elsif room.hash_tag_position == "after"
         # 後付け
-        tweet.post = "#{tweet.post} #{room.try(:hash_tag)}"
+        tweet_text = "#{tweet.post} #{room.try(:hash_tag)}"
       end
     end
     
     ActiveRecord::Base.transaction do
-      # 内部DB保存
-      if tweet.save
-        flash[:notice] = 'ポストが完了しました。'
+      # 内部DB保存 => しない
+      # if tweet.save
+      #   flash[:notice] = 'ポストが完了しました。'
 
         # Twitterポスト
         if room.twitter_synchro == true
@@ -70,14 +76,15 @@ class TweetsController < ApplicationController
           twitter_client = Twitter::Client.new
           
           # 投稿ポスト
-          twitter_client.update( tweet.post )
+#          twitter_client.update( tweet.post )
+          twitter_client.update( tweet_text )
         end
-      else
-        flash[:alert] = 'ポストが失敗しました。'
-      end
+    #   else
+    #     flash[:alert] = 'ポストが失敗しました。'
+    #   end
     end
     
-    redirect_to( action: "index", room_id: params[:room_id] ) and return
+    redirect_to( action: "index", room_id: room_id ) and return
   rescue => ex
     flash[:notice] = ""
     flash[:alert] = ex.message
@@ -86,14 +93,11 @@ class TweetsController < ApplicationController
     @tweets = Tweet.where( room_id: params[:room_id] ).order( "created_at DESC" ).includes( :user )
     
     # アイコン配列生成用
-    @tweet_hash = Hash.new{ |hash, key| hash[key] = Hash.new }
-    @tweets.each{ |tweet|
-      @tweet_hash[tweet.user_id][:screen_name] = tweet.user.try(:screen_name)
-      @tweet_hash[tweet.user_id][:image] = tweet.user.try(:image)
-    }
+    @icon_hash = Tweet.get_user_icons( @room )
     
     @tweet = Tweet.new( params[:tweet] )
     @str_count = @room.hash_tag.length + @tweet.post.to_s.gsub("\r\n", " ").length + 1  # 改行が2文字カウントになるため半角スペースへ置換
+    
     render action: "index" and return
   end
 
@@ -106,90 +110,5 @@ class TweetsController < ApplicationController
 
     redirect_to( action: "index", room_id: tweet.room_id ) and return
   end
-  
-  
-  
-=begin
-  # GET /tweets
-  # GET /tweets.json
-  def index
-    @tweets = Tweet.all
 
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @tweets }
-    end
-  end
-
-  # GET /tweets/1
-  # GET /tweets/1.json
-  def show
-    @tweet = Tweet.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @tweet }
-    end
-  end
-
-  # GET /tweets/new
-  # GET /tweets/new.json
-  def new
-    @tweet = Tweet.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @tweet }
-    end
-  end
-
-  # GET /tweets/1/edit
-  def edit
-    @tweet = Tweet.find(params[:id])
-  end
-
-  # POST /tweets
-  # POST /tweets.json
-  def create
-    @tweet = Tweet.new(params[:tweet])
-
-    respond_to do |format|
-      if @tweet.save
-        format.html { redirect_to @tweet, notice: 'Tweet was successfully created.' }
-        format.json { render json: @tweet, status: :created, location: @tweet }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @tweet.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # PUT /tweets/1
-  # PUT /tweets/1.json
-  def update
-    @tweet = Tweet.find(params[:id])
-
-    respond_to do |format|
-      if @tweet.update_attributes(params[:tweet])
-        format.html { redirect_to @tweet, notice: 'Tweet was successfully updated.' }
-        format.json { head :no_content }
-      else
-        format.html { render action: "edit" }
-        format.json { render json: @tweet.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /tweets/1
-  # DELETE /tweets/1.json
-  def destroy
-    @tweet = Tweet.find(params[:id])
-    @tweet.destroy
-
-    respond_to do |format|
-      format.html { redirect_to tweets_url }
-      format.json { head :no_content }
-    end
-  end
-=end
 end

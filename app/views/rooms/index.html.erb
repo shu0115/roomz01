@@ -32,6 +32,8 @@
     <th>Created</th>
     <th>Position</th>
     <th>Synchro</th>
+    <th>GetTweet</th>
+    <th></th>
     <th></th>
     <th></th>
   </tr>
@@ -50,7 +52,11 @@
     <%# Twitter同時投稿 %>
     <td><%= room.twitter_synchro %></td>
     
+    <%# ツイート取得 %>
+    <td><%= room.worker_flag %></td>
+    
     <% if session[:user_id] == room.user_id %>
+      <td><%= link_to "Show", { action: 'show', id: room.id } %></td>
       <td><%= link_to "Edit", { action: 'edit', id: room.id } %></td>
       <td><%= link_to "Delete", { action: 'delete', id: room.id }, onClick: "return confirm('「#{room.hash_tag}」を削除します。よろしいですか？');" %></td>
     <% else %>
