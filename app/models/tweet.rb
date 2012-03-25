@@ -71,7 +71,7 @@ class Tweet < ActiveRecord::Base
       # 取得データが無くなるまでループ
       loop do
         # ツイートを取得
-        get_tweets = Twitter.search( "#{search_query}", lang: "ja", result_type: "recent", since_id: room.last_max_id.to_i, rpp: per_page, page: page )
+        get_tweets = Twitter.search( "#{search_query} -RT", lang: "ja", result_type: "recent", since_id: room.last_max_id.to_i, rpp: per_page, page: page )
 
         get_tweets.each{ |tweet|
           # ツイートが既に登録済みで無ければ
