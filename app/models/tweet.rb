@@ -62,7 +62,7 @@ class Tweet < ActiveRecord::Base
             # ツイートを登録
             add_tweet = Tweet.new
             add_tweet.room_id = room.id
-            add_tweet.user_id = User.where( uid: tweet.from_user_id ).first.try(:id)
+            add_tweet.user_id = User.where( uid: tweet.from_user_id.to_s ).first.try(:id)
             add_tweet.post = tweet.text
             add_tweet.from_twitter_id = tweet.id
             add_tweet.from_twitter_user_id = tweet.from_user_id
