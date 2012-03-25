@@ -53,7 +53,9 @@
 <p>
 メンバーズ：<br />
   <% @icon_hash.each_pair{ |key, value| %>
-    <%= link_to_unless( value[:screen_name].blank?, image_tag( value[:image], size: "20x20" ), "https://twitter.com/#!/#{value[:screen_name]}", target: "_blank"  ) %>
+    <% unless value[:image].blank? %>
+      <%= link_to_unless( value[:screen_name].blank?, image_tag( value[:image], size: "20x20" ), "https://twitter.com/#!/#{value[:screen_name]}", target: "_blank"  ) %>
+    <% end %>
   <% } %>
 </p>
 
