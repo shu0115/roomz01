@@ -59,7 +59,7 @@
 メンバーズ：<br />
   <% @icon_hash.each_pair{ |key, value| %>
     <% unless value[:image].blank? %>
-      <%= link_to_unless( value[:screen_name].blank?, image_tag( value[:image], size: "20x20" ), "https://twitter.com/#!/#{value[:screen_name]}", target: "_blank", title: value[:screen_name] ) %>
+      <%= link_to_unless( value[:screen_name].blank?, image_tag( value[:image], size: "20x20" ), "https://twitter.com/#!/#{value[:screen_name]}", target: "_blank", title: value[:screen_name] ) rescue nil %>
     <% end %>
   <% } %>
 </p>
@@ -85,7 +85,7 @@
     <%# User %>
     <td align="center">
       <% unless tweet.user_image_url.blank? %>
-        <%= link_to_unless( tweet.from_twitter_user.blank?, image_tag( tweet.user_image_url, size: "20x20" ), "https://twitter.com/#!/#{tweet.from_twitter_user}", target: "_blank", title: tweet.from_twitter_user ) %>
+        <%= link_to_unless( tweet.from_twitter_user.blank?, image_tag( tweet.user_image_url, size: "20x20" ), "https://twitter.com/#!/#{tweet.from_twitter_user}", target: "_blank", title: tweet.from_twitter_user ) rescue nil %>
       <% end %>
     </td>
     
