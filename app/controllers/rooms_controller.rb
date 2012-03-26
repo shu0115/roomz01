@@ -35,7 +35,11 @@ class RoomsController < ApplicationController
   # edit #
   #------#
   def edit
-    @room = Room.where( user_id: session[:user_id], id: params[:id] ).first
+    if current_user.is_super?
+      @room = Room.where( id: params[:id] ).first
+    else
+      @room = Room.where( user_id: session[:user_id], id: params[:id] ).first
+    end
   end
 
   #--------#
@@ -60,7 +64,11 @@ class RoomsController < ApplicationController
 #    update_room[:twitter_synchro] = false unless update_room[:twitter_synchro] == "true"
     update_room[:worker_flag] = false unless update_room[:worker_flag] == "true"
     
-    room = Room.where( id: params[:id], user_id: session[:user_id] ).first
+    if current_user.is_super?
+      room = Room.where( id: params[:id] ).first
+    else
+      room = Room.where( id: params[:id], user_id: session[:user_id] ).first
+    end
 
     unless room.update_attributes( update_room )
       redirect_to( { action: "edit", id: room.id }, alert: 'Roomの更新に失敗しました。' ) and return
@@ -73,8 +81,13 @@ class RoomsController < ApplicationController
   # delete #
   #--------#
   def delete
-    @room = Room.where( id: params[:id], user_id: session[:user_id] ).first
-    @room.destroy
+    if current_user.is_super?
+      room = Room.where( id: params[:id] ).first
+    else
+      room = Room.where( id: params[:id], user_id: session[:user_id] ).first
+    end
+    
+    room.destroy
 
     redirect_to( action: "index" ) and return
   end
