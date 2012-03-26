@@ -3,7 +3,7 @@
 <br />
 
 <%= link_to "Tweets", { controller: "tweets", action: 'index', room_id: @room.id } %>
- | <%= link_to "Edit", { action: 'edit', id: @room.id } %><br />
+<% if @room.user_id == session[:user_id] or current_user.is_super? %> | <%= link_to "Edit", { action: 'edit', id: @room.id } %><br /><% end %>
 
 <h2>Room Tweets</h2>
 
