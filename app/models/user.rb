@@ -17,6 +17,18 @@ class User < ActiveRecord::Base
     end
   end
 
+  #-----------#
+  # is_super? #
+  #-----------#
+  # スーパーユーザ判定
+  def is_super?
+    if self.uid == "14369656"
+      return true
+    else
+      return false
+    end
+  end
+  
   private
 
   #---------------------------#

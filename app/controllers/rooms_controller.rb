@@ -22,6 +22,13 @@ class RoomsController < ApplicationController
 
     # アイコン配列生成用
     @icon_hash = Tweet.get_user_icons_from_tweet( @get_tweets )
+  rescue => ex
+    flash.now[:alert] = ex.message
+    
+    @rooms = Room.order( "created_at DESC" ).includes( :user ).all
+    @room = Room.new
+    
+    render action: "index" and return
   end
   
   #------#

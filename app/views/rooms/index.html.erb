@@ -28,11 +28,12 @@
 <%# Room一覧 %>
 <table>
   <tr>
-    <th>Hash tag</th>
-    <th>Created</th>
-    <th>Position</th>
-    <th>Synchro</th>
-    <th>GetTweet</th>
+    <th style="white-space: nowrap;">Hash tag</th>
+    <th style="white-space: nowrap;">Created</th>
+    <th style="white-space: nowrap;">Position</th>
+    <th style="white-space: nowrap;">Synchro</th>
+    <th style="white-space: nowrap;">GetTweet</th>
+    <th style="white-space: nowrap;">SearchQuery</th>
     <th></th>
     <th></th>
     <th></th>
@@ -55,8 +56,11 @@
     <%# ツイート取得 %>
     <td><%= room.worker_flag %></td>
     
-    <% if session[:user_id] == room.user_id %>
-      <td><%= link_to "Show", { action: 'show', id: room.id } %></td>
+    <%# 検索クエリ %>
+    <td style="white-space: nowrap;"><%= room.search_query %></td>
+    
+    <td><%= link_to "Show", { action: 'show', id: room.id } %></td>
+    <% if session[:user_id] == room.user_id or current_user.is_super? %>
       <td><%= link_to "Edit", { action: 'edit', id: room.id } %></td>
       <td><%= link_to "Delete", { action: 'delete', id: room.id }, onClick: "return confirm('「#{room.hash_tag}」を削除します。よろしいですか？');" %></td>
     <% else %>
@@ -69,5 +73,3 @@
 </table>
 
 <br />
-
-<%#= link_to 'New', new_room_path %>

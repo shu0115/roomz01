@@ -45,7 +45,7 @@
   
   <br />
   
-<% if current_user.uid == "14369656" %>
+<% if current_user.is_super? %>
   <span class="field">
     <%= f.check_box( :worker_flag, { checked: @room.worker_flag }, true, false ) %>
     <%= f.label :worker_flag, "Twitterツイート取得" %><br />
@@ -54,8 +54,15 @@
   <br />
 <% end %>
 
+  <span class="field">
+    <%= f.label :last_max_id, "Max ID" %>：<br />
+    <%= f.number_field :last_max_id, size: 50 %><br />
+  </span>
+  
+  <br />
+
   <span class="actions">
-    <%= f.submit "Save" %>
+    <%= f.submit "Save", disable_with: "Save" %>
   </span>
 <% end %>
 

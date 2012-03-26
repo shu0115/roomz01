@@ -1,3 +1,10 @@
+
+<br />
+<br />
+
+<%= link_to "Tweets", { controller: "tweets", action: 'index', room_id: @room.id } %>
+ | <%= link_to "Edit", { action: 'edit', id: @room.id } %><br />
+
 <h2>Room Tweets</h2>
 
 <%# アイコン一覧 %>
@@ -29,7 +36,7 @@
   <%# print "[ tweet ] : " ; p tweet ; %>
   <tr>
     <%# No. %><td><%= (index + 1) %></td>
-    <%# User %><td align="center"><%= link_to_unless( tweet.from_user.blank?, image_tag( tweet.profile_image_url, size: "20x20" ), "https://twitter.com/#!/#{tweet.from_user}", target: "_blank"  ) %></td>
+    <%# User %><td align="center"><%= link_to_unless( tweet.from_user.blank?, image_tag( tweet.profile_image_url, size: "20x20" ), "https://twitter.com/#!/#{tweet.from_user}", target: "_blank", title: tweet.from_user ) %></td>
     <%# Post %><td><%= auto_link( simple_format(tweet.text), html: { target: '_blank' } ) %></td>
     <%# Time %><td style="white-space: nowrap;"><%= link_to_unless( tweet.created_at.blank?, tweet.created_at.strftime("%Y/%m/%d %H:%M:%S"), "https://twitter.com/#!/#{tweet.from_user}/status/#{tweet.id}", target: "_blank" )  unless tweet.created_at.blank? %><%#= tweet.created_at.strftime("%Y/%m/%d %H:%M:%S") unless tweet.created_at.blank? %></td>
   </tr>
