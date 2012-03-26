@@ -33,6 +33,7 @@
     <th style="white-space: nowrap;">Position</th>
     <th style="white-space: nowrap;">Synchro</th>
     <th style="white-space: nowrap;">GetTweet</th>
+    <th style="white-space: nowrap;">MaxID</th>
     <th style="white-space: nowrap;">SearchQuery</th>
     <th></th>
     <th></th>
@@ -55,6 +56,9 @@
     
     <%# ツイート取得 %>
     <td><%= room.worker_flag %></td>
+    
+    <%# MaxID %>
+    <td><%= room.last_max_id %></td>
     
     <%# 検索クエリ %>
     <td style="white-space: nowrap;"><%= room.search_query %></td>
