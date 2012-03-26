@@ -94,8 +94,12 @@ class Tweet < ActiveRecord::Base
         
         page += 1
         
+        # 取得ツイートが無ければ
         if get_tweets.blank?
+          # MaxIDを更新
           room.update_attributes( last_max_id: last_max_id )
+          
+          # ループを抜ける
           break 
         end
       end
