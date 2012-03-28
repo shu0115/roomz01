@@ -18,6 +18,9 @@ class TweetsController < ApplicationController
     
     # アイコン配列生成用
     @icon_hash = Tweet.get_user_icons( @room )
+
+    # ページタイトル
+    @title = @room.hash_tag
   end
 
   #--------#

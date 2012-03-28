@@ -22,6 +22,9 @@ class RoomsController < ApplicationController
 
     # アイコン配列生成用
     @icon_hash = Tweet.get_user_icons_from_tweet( @get_tweets )
+
+    # ページタイトル
+    @title = @room.hash_tag
   rescue => ex
     flash.now[:alert] = ex.message
     
@@ -40,6 +43,9 @@ class RoomsController < ApplicationController
     else
       @room = Room.where( user_id: session[:user_id], id: params[:id] ).first
     end
+
+    # ページタイトル
+    @title = @room.hash_tag
   end
 
   #--------#
