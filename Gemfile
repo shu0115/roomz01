@@ -52,3 +52,6 @@ gem 'twitter'
 
 # AutoLink
 gem "rails_autolink", "~> 1.0.4"
+
+# Paging
+gem 'kaminari'

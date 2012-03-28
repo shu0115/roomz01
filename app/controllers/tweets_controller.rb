@@ -6,13 +6,10 @@ class TweetsController < ApplicationController
   #-------#
   def index
     @room = Room.where( id: params[:room_id] ).first
-    @tweets = Tweet.where( room_id: params[:room_id] ).order( "created_at DESC" ).includes( :user )
+    @tweets = Tweet.where( room_id: params[:room_id] ).order( "created_at DESC" ).includes( :user ).page( params[:page] ).per( PER_PAGE )
     
     @tweet = Tweet.new
     @str_count = @room.hash_tag.length + 1
-
-    # Twitterから取得
-#    @get_tweets = Twitter.search( "#{@room.hash_tag} -rt", lang: "ja", result_type: "recent", rpp: 100 )
 
     # TwitterのツイートをRoomzへ登録
     if @room.worker_flag == true
@@ -20,7 +17,6 @@ class TweetsController < ApplicationController
     end
     
     # アイコン配列生成用
-#    @tweet_hash = Tweet.get_user_icons( @tweets )
     @icon_hash = Tweet.get_user_icons( @room )
   end
 
@@ -37,7 +33,6 @@ class TweetsController < ApplicationController
     # tweet.user_image_url = current_user.image
     tweet_text = ""
     
-#    room = Room.where( id: tweet.room_id ).first
     room = Room.where( id: room_id ).first
     
     # ハッシュタグ付加
