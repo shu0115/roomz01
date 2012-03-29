@@ -109,4 +109,12 @@ class TweetsController < ApplicationController
     redirect_to( action: "index", room_id: tweet.room_id ) and return
   end
 
+  #-------#
+  # batch #
+  #-------#
+  def batch
+    @result_hash = Tweet.get_all_room_tweet
+#    @tweets = Tweet.order( "created_at DESC" ).all
+  end
+  
 end

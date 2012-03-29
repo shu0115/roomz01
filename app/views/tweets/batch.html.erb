@@ -1,0 +1,7 @@
+
+<br />
+<br />
+
+<% @result_hash.each_pair{ |key, value| %>
+  <%= key %>：<%= value[:title] %> | <%= value[:total_count] %> | <%= value[:end_at].strftime("%Y/%m/%d %H:%M:%S") unless value[:end_at].blank? %><br />
+<% } %>

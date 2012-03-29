@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <% if current_user.is_super? and params[:controller] == "tweets" and params[:action] == "batch" %>
+    <meta http-equiv="Refresh" content="3600">
+  <% end %>
   <title><%= @title || "Roomz" %></title>
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
@@ -27,6 +30,7 @@
   <%= current_user.get_name %>
   : <%= link_to "Top" , :root %>
   | <%= link_to "Logout" , logout_path %>
+  <% if current_user.is_super? %>| <%= link_to "Batch", controller: "tweets", action: "batch" %><% end %>
 <% else %>
   <%# 未ログイン %>
   <%= link_to "Login", "/auth/#{DEFAULT_PROVIDER}" %>
