@@ -18,7 +18,6 @@
 
 <% @batch_logs.each_with_index{ |batch, index| %>
   <%# ツイート取得ルーム数 %>
-  <% print "[ length ] : " ; p batch.result.split("\n").length ; %>
   <% room_count = batch.result.split("\n").length + 1 rescue 1 %>
   <tr>
     <%# No. %>
