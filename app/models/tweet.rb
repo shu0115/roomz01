@@ -130,8 +130,8 @@ class Tweet < ActiveRecord::Base
     # Roomループ
     rooms.each{ |room|
       batch_log.result ||= ""
-      batch_log.result += "#{room.hash_tag} | "
-      batch_log.result += "#{Time.now.strftime("%Y/%m/%d %H:%M:%S")} | "
+      batch_log.result += "#{room.hash_tag}|"
+      batch_log.result += "#{Time.now.strftime("%Y/%m/%d %H:%M:%S")}|"
       
       page = 1
       per_page = 100
@@ -178,8 +178,8 @@ class Tweet < ActiveRecord::Base
           end
         
           batch_log.total_count += total_count
-          batch_log.result += "#{Time.now.strftime("%Y/%m/%d %H:%M:%S")} | "
-          batch_log.result += "#{total_count} |\n"
+          batch_log.result += "#{Time.now.strftime("%Y/%m/%d %H:%M:%S")}|"
+          batch_log.result += "#{total_count}|\n"
           
           # ループを抜ける
           break 

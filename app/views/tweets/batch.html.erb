@@ -13,34 +13,49 @@
     <th style="white-space: nowrap;">StartAt／EndAt</th>
     <th style="white-space: nowrap;">Time(sec.)</th>
     <th style="white-space: nowrap;">TotalCount</th>
-    <th style="white-space: nowrap;">Result</th>
+    <th style="white-space: nowrap;" colspan="4">Result</th>
   </tr>
 
 <% @batch_logs.each_with_index{ |batch, index| %>
+  <%# ツイート取得ルーム数 %>
+  <% print "[ length ] : " ; p batch.result.split("\n").length ; %>
+  <% room_count = batch.result.split("\n").length + 1 rescue 1 %>
   <tr>
     <%# No. %>
-    <td style="white-space: nowrap;"><%= (index + 1) %></td>
+    <td style="white-space: nowrap;" rowspan="<%= room_count %>"><%= (index + 1) %></td>
     
     <%# Name %>
     <% if false %><td><%= batch.name %></td><% end %>
     
     <%# Description %>
-    <td style="white-space: nowrap;"><%= batch.description %></td>
+    <td style="white-space: nowrap;" rowspan="<%= room_count %>"><%= batch.description %></td>
     
     <%# StartAt／EndAt %>
-    <td style="white-space: nowrap;">
+    <td style="white-space: nowrap;" rowspan="<%= room_count %>">
       <%= batch.start_at.strftime("%Y/%m/%d %H:%M:%S") unless batch.start_at.blank? %><br />
       <%= batch.end_at.strftime("%Y/%m/%d %H:%M:%S") unless batch.end_at.blank? %>
     </td>
     
     <%# ProcessTime %>
-    <td style="white-space: nowrap;"><%= sprintf( "%.3f", batch.process_time.to_f ) %></td>
+    <td style="white-space: nowrap;" rowspan="<%= room_count %>"><%= sprintf( "%.3f", batch.process_time.to_f ) %></td>
     
     <%# TotalCount %>
-    <td style="white-space: nowrap;"><%= batch.total_count %></td>
+    <td style="white-space: nowrap;" rowspan="<%= room_count %>"><%= batch.total_count %></td>
     
     <%# Result %>
-    <td style="white-space: nowrap;"><%= simple_format( batch.result ) %></td>
+    <% batch_row = batch.result.split("\n") %>
+    <%# 行ループ %>
+    <% batch_row.each{ |row| %>
+    <tr>
+      <% batch_column = row.split("|") %>
+      <%# 列ループ %>
+      <% batch_column.each{ |result| %>
+      <td style="white-space: nowrap;">
+        <%= result %>
+      </td>
+      <% } %>
+    </tr>
+    <% } %>
   </tr>
 <% } %>
 
