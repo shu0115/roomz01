@@ -178,8 +178,8 @@ class Tweet < ActiveRecord::Base
           end
         
           batch_log.total_count += total_count
-          batch_log.result += "#{total_count} | "
-          batch_log.result += "#{Time.now.strftime("%Y/%m/%d %H:%M:%S")} |\n"
+          batch_log.result += "#{Time.now.strftime("%Y/%m/%d %H:%M:%S")} | "
+          batch_log.result += "#{total_count} |\n"
           
           # ループを抜ける
           break 
