@@ -30,8 +30,6 @@ class Tweet < ActiveRecord::Base
   def self.get_user_icons_from_tweet( tweets )
     icon_hash = Hash.new{ |hash, key| hash[key] = Hash.new }
     
-#    tweets = Tweet.where( room_id: room.id ).select( "from_twitter_user_id, from_twitter_user, user_image_url" ).order( "created_at DESC" ).limit( 1000 ).all
-    
     tweets.each{ |tweet|
       icon_hash[tweet.from_user_id][:screen_name] = tweet.from_user
       icon_hash[tweet.from_user_id][:image] = tweet.profile_image_url
@@ -105,29 +103,47 @@ class Tweet < ActiveRecord::Base
       end
     end
   end
+  
+  #--------------------#
+  # self.run_get_tweet #
+  #--------------------#
+  # バッチ呼び出し
+  def self.run_get_tweet
+    Tweet.get_all_room_tweet
+  end
 
   #-------------------------#
   # self.get_all_room_tweet #
   #-------------------------#
   # 全Roomツイート取得&登録
   def self.get_all_room_tweet
-    rooms = Room.where( worker_flag: true ).all
-    result_hash = Hash.new{ |hash, key| hash[key] = Hash.new }
+    # バッチログ情報
+    batch_log = BatchLog.new
+    batch_log.name = "Tweet.get_all_room_tweet"
+    batch_log.description = "ツイート取得／保存"
+    batch_log.start_at = Time.now
+    batch_log.save
     
+    # Room全取得
+    rooms = Room.where( worker_flag: true ).all
+    
+    # Roomループ
     rooms.each{ |room|
-      result_hash[room.id][:title] = room.hash_tag
-    ActiveRecord::Base.transaction do
+      batch_log.result ||= ""
+      batch_log.result += "#{room.hash_tag} | "
+      batch_log.result += "#{Time.now.strftime("%Y/%m/%d %H:%M:%S")} | "
+      
       page = 1
       per_page = 100
       last_max_id = 1
       search_query = room.search_query.presence || room.hash_tag
       total_count = 0
+      batch_log.total_count ||= 0
       
       # 取得データが無くなるまでループ
       loop do
         # ツイートを取得
         get_tweets = Twitter.search( "#{search_query}", lang: "ja", result_type: "recent", since_id: room.last_max_id.to_i, rpp: per_page, page: page )
-        print "[ get_tweets.length ] : " ; p get_tweets.length ;
 
         get_tweets.each{ |tweet|
           # ツイートが既に登録済みで無ければ
@@ -147,6 +163,7 @@ class Tweet < ActiveRecord::Base
               total_count += 1
             end
             
+            # max_id更新
             last_max_id = tweet.id if last_max_id < tweet.id
           end
         }
@@ -155,27 +172,24 @@ class Tweet < ActiveRecord::Base
         
         # 取得ツイートが無ければ
         if get_tweets.blank?
-          # MaxIDを更新
-          room.update_attributes( last_max_id: last_max_id )
-          
-          print "[ total_count ] : " ; p total_count ;
-          result_hash[room.id][:total_count] = total_count
-          result_hash[room.id][:end_at] = Time.now
+          # MaxIDを更新(1より大きくなっていれば)
+          if last_max_id > 1
+            room.update_attributes( last_max_id: last_max_id )
+          end
+        
+          batch_log.total_count += total_count
+          batch_log.result += "#{total_count} | "
+          batch_log.result += "#{Time.now.strftime("%Y/%m/%d %H:%M:%S")} |\n"
           
           # ループを抜ける
           break 
         end
       end
-    end
-      
     }
-    return result_hash
-  end
-  
-  #---------------#
-  # self.test_run #
-  #---------------#
-  def self.test_run
-    puts "[ ----- TEST RUN ----- ]"
+    
+    # 終了時刻保存
+    batch_log.end_at = Time.now
+    batch_log.process_time = batch_log.end_at - batch_log.start_at
+    batch_log.save
   end
 end

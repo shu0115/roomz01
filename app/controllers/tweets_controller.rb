@@ -31,9 +31,6 @@ class TweetsController < ApplicationController
     room_id = params[:room_id]
     
     tweet = Tweet.new( params[:tweet] )
-    # tweet.room_id = params[:room_id]
-    # tweet.user_id = session[:user_id]
-    # tweet.user_image_url = current_user.image
     tweet_text = ""
     
     room = Room.where( id: room_id ).first
@@ -56,30 +53,22 @@ class TweetsController < ApplicationController
     end
     
     ActiveRecord::Base.transaction do
-      # 内部DB保存 => しない
-      # if tweet.save
-      #   flash[:notice] = 'ポストが完了しました。'
-
-        # Twitterポスト
-        if room.twitter_synchro == true
-          # Twitter接続設定
-          Twitter.configure do |config|
-            config.consumer_key       = ENV['TWITTER_KEY']
-            config.consumer_secret    = ENV['TWITTER_SECRET']
-            config.oauth_token        = current_user.token
-            config.oauth_token_secret = current_user.secret
-          end
-
-          # Twitterクライアント生成
-          twitter_client = Twitter::Client.new
-          
-          # 投稿ポスト
-#          twitter_client.update( tweet.post )
-          twitter_client.update( tweet_text )
+      # Twitterポスト
+      if room.twitter_synchro == true
+        # Twitter接続設定
+        Twitter.configure do |config|
+          config.consumer_key       = ENV['TWITTER_KEY']
+          config.consumer_secret    = ENV['TWITTER_SECRET']
+          config.oauth_token        = current_user.token
+          config.oauth_token_secret = current_user.secret
         end
-    #   else
-    #     flash[:alert] = 'ポストが失敗しました。'
-    #   end
+
+        # Twitterクライアント生成
+        twitter_client = Twitter::Client.new
+        
+        # 投稿ポスト
+        twitter_client.update( tweet_text )
+      end
     end
     
     redirect_to( action: "index", room_id: room_id ) and return
@@ -113,8 +102,7 @@ class TweetsController < ApplicationController
   # batch #
   #-------#
   def batch
-    @result_hash = Tweet.get_all_room_tweet
-#    @tweets = Tweet.order( "created_at DESC" ).all
+    # バッチログ取得
+    @batch_logs = BatchLog.order( "created_at DESC" ).page( params[:page] ).per( PER_PAGE )
   end
-  
 end

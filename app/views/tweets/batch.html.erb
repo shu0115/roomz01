@@ -2,6 +2,52 @@
 <br />
 <br />
 
-<% @result_hash.each_pair{ |key, value| %>
-  <%= key %>：<%= value[:title] %> | <%= value[:total_count] %> | <%= value[:end_at].strftime("%Y/%m/%d %H:%M:%S") unless value[:end_at].blank? %><br />
+<%= paginate @batch_logs %>
+
+<% if @batch_logs.length > 0 %>
+<table>
+  <tr>
+    <th style="white-space: nowrap;">No.</th>
+    <!--<th>Name</th>-->
+    <th style="white-space: nowrap;">Description</th>
+    <th style="white-space: nowrap;">StartAt／EndAt</th>
+    <th style="white-space: nowrap;">Time(sec.)</th>
+    <th style="white-space: nowrap;">TotalCount</th>
+    <th style="white-space: nowrap;">Result</th>
+  </tr>
+
+<% @batch_logs.each_with_index{ |batch, index| %>
+  <tr>
+    <%# No. %>
+    <td style="white-space: nowrap;"><%= (index + 1) %></td>
+    
+    <%# Name %>
+    <% if false %><td><%= batch.name %></td><% end %>
+    
+    <%# Description %>
+    <td style="white-space: nowrap;"><%= batch.description %></td>
+    
+    <%# StartAt／EndAt %>
+    <td style="white-space: nowrap;">
+      <%= batch.start_at.strftime("%Y/%m/%d %H:%M:%S") unless batch.start_at.blank? %><br />
+      <%= batch.end_at.strftime("%Y/%m/%d %H:%M:%S") unless batch.end_at.blank? %>
+    </td>
+    
+    <%# ProcessTime %>
+    <td style="white-space: nowrap;"><%= sprintf( "%.3f", batch.process_time.to_f ) %></td>
+    
+    <%# TotalCount %>
+    <td style="white-space: nowrap;"><%= batch.total_count %></td>
+    
+    <%# Result %>
+    <td style="white-space: nowrap;"><%= simple_format( batch.result ) %></td>
+  </tr>
 <% } %>
+
+</table>
+<% end %>
+
+<%= paginate @batch_logs %>
+
+<br />
+<br />
