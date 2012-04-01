@@ -22,7 +22,7 @@ class User < ActiveRecord::Base
   #-----------#
   # スーパーユーザ判定
   def is_super?
-    if self.uid == "14369656"
+    if self.uid == SUPER_UID
       return true
     else
       return false
@@ -55,6 +55,13 @@ class User < ActiveRecord::Base
     return user
   end
 
+  #---------------------#
+  # self.get_super_user #
+  #---------------------#
+  def self.get_super_user
+    User.where( uid: SUPER_UID ).first
+  end
+  
 =begin
   #----------------#
   # self.get_image #

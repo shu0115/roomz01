@@ -92,7 +92,13 @@ class TweetsController < ApplicationController
   # delete #
   #--------#
   def delete
-    tweet = Tweet.where( id: params[:id], user_id: session[:user_id] ).first
+    if current_user.is_super?
+      tweet = Tweet.where( id: params[:id] ).first
+    else
+      tweet = Tweet.where( id: params[:id], user_id: session[:user_id] ).first
+    end
+    
+    # 削除
     tweet.destroy
 
     redirect_to( action: "index", room_id: tweet.room_id ) and return

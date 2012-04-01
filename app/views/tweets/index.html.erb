@@ -98,7 +98,7 @@
     <td style="white-space: nowrap;"><%= link_to_unless( tweet.created_at.blank?, tweet.created_at.strftime("%Y/%m/%d %H:%M:%S"), "https://twitter.com/#!/#{tweet.from_twitter_user}/status/#{tweet.from_twitter_id}", target: "_blank" )  unless tweet.created_at.blank? %></td>
     
     <%# Delete %>
-    <td><% if session[:user_id] == tweet.user_id %><%= link_to "Delete", { action: 'delete', id: tweet.id, room_id: @room.id }, onClick: "return confirm('「No.#{(index + 1)}」を削除します。よろしいですか？');" %><% end %></td>
+    <td><% if session[:user_id] == tweet.user_id or current_user.is_super? %><%= link_to "Delete", { action: 'delete', id: tweet.id, room_id: @room.id }, onClick: "return confirm('「No.#{(index + 1)}」を削除します。よろしいですか？');" %><% end %></td>
   </tr>
 <% } %>
 </table>
