@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(:version => 20120401124859) do
     t.text     "description"
     t.datetime "start_at"
     t.datetime "end_at"
-    t.time     "process_time"
+    t.float    "process_time"
     t.string   "status"
     t.text     "result"
     t.integer  "total_count"

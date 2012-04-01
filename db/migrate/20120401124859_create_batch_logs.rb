@@ -5,7 +5,7 @@ class CreateBatchLogs < ActiveRecord::Migration
       t.text :description
       t.timestamp :start_at
       t.timestamp :end_at
-      t.time :process_time
+      t.float :process_time
       t.string :status
       t.text :result
       t.integer :total_count
