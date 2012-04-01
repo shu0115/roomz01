@@ -172,4 +172,10 @@ class Tweet < ActiveRecord::Base
     return result_hash
   end
   
+  #---------------#
+  # self.test_run #
+  #---------------#
+  def self.test_run
+    puts "[ ----- TEST RUN ----- ]"
+  end
 end
