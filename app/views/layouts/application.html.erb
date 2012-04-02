@@ -25,9 +25,9 @@
   <%# ログイン済み %>
   <%= link_to_unless( current_user.screen_name.blank?, image_tag( current_user.image, size: "20x20" ), "https://twitter.com/#!/#{current_user.screen_name}", target: "_blank" ) %>
   <%= current_user.get_name %>
-  : <%= link_to "Top" , :root %>
-  | <%= link_to "Logout" , logout_path %>
-  <% if current_user.is_super? %>| <%= link_to "Batch", controller: "tweets", action: "batch" %><% end %>
+  : <%= link_to "Rooms" , controller: "rooms" %>
+  | <%= link_to "Scheduler", controller: "tweets", action: "batch" %>
+  || <%= link_to "Logout" , logout_path %>
 <% else %>
   <%# 未ログイン %>
   <%= link_to "Login", "/auth/#{DEFAULT_PROVIDER}" %>

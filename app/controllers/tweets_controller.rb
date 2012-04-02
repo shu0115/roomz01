@@ -1,6 +1,8 @@
 # coding: utf-8
 class TweetsController < ApplicationController
   
+  BATCH_PER_PAGE = 24
+  
   #-------#
   # index #
   #-------#
@@ -109,6 +111,6 @@ class TweetsController < ApplicationController
   #-------#
   def batch
     # バッチログ取得
-    @batch_logs = BatchLog.order( "created_at DESC" ).page( params[:page] ).per( PER_PAGE )
+    @batch_logs = BatchLog.order( "created_at DESC" ).page( params[:page] ).per( BATCH_PER_PAGE )
   end
 end
