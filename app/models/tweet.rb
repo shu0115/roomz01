@@ -125,11 +125,12 @@ class Tweet < ActiveRecord::Base
     batch_log.save
     
     # Room全取得
-    rooms = Room.where( worker_flag: true ).all
+    rooms = Room.where( worker_flag: true ).order( "id DESC" ).all
     
     # Roomループ
     rooms.each{ |room|
       batch_log.result ||= ""
+      batch_log.result += "#{room.id}|"
       batch_log.result += "#{room.hash_tag}|"
       batch_log.result += "#{Time.now.strftime("%Y/%m/%d %H:%M:%S")}|"
       
