@@ -37,8 +37,10 @@
     <th style="white-space: nowrap;">MaxID</th>
     <th style="white-space: nowrap;">SearchQuery</th>
     <th></th>
+    <% if @exist_me %>
     <th></th>
     <th></th>
+    <% end %>
   </tr>
 
 <% @rooms.each do |room| %>
@@ -65,13 +67,15 @@
     <td style="white-space: nowrap;"><%= room.search_query %></td>
     
     <td><%= link_to "Show", { action: 'show', id: room.id } %></td>
+    
     <% if session[:user_id] == room.user_id or current_user.is_super? %>
       <td><%= link_to "Edit", { action: 'edit', id: room.id } %></td>
       <td><%= link_to "Delete", { action: 'delete', id: room.id }, onClick: "return confirm('「#{room.hash_tag}」を削除します。よろしいですか？');" %></td>
     <% else %>
-      <td></td>
-      <td></td>
-      <td></td>
+      <% if @exist_me %>
+        <td></td>
+        <td></td>
+      <% end %>
     <% end %>
   </tr>
 <% end %>

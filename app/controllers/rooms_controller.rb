@@ -5,7 +5,9 @@ class RoomsController < ApplicationController
   # index #
   #-------#
   def index
-    @rooms = Room.order( "created_at DESC" ).includes( :user ).all
+    @rooms = Room.order( "created_at DESC" ).includes( :user )
+    @exist_me = @rooms.where( user_id: session[:user_id] ).exists?
+    
     @room = Room.new
   end
   
@@ -13,8 +15,10 @@ class RoomsController < ApplicationController
   # show #
   #------#
   def show
-    @room = Room.where( id: params[:id] ).first
-    @tweets = Tweet.where( room_id: params[:id] ).order( "created_at DESC" ).includes( :user )
+    room_id = params[:id]
+    
+    @room = Room.where( id: room_id ).first
+    @tweets = Tweet.where( room_id: room_id ).order( "created_at DESC" ).includes( :user )
     
     # Twitterから取得
     get_twitter_hash = Tweet.get_twitter_param( @room )
