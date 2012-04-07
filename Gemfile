@@ -1,5 +1,4 @@
-#source 'https://rubygems.org'
-source 'http://production.cf.rubygems.org/'
+source 'https://rubygems.org'
 
 gem 'rails', '3.2.3'
 
@@ -7,7 +6,6 @@ gem 'rails', '3.2.3'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'sqlite3'
-
 
 # Gems used only for assets and not required
 # in production environments by default.
