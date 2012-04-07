@@ -25,6 +25,9 @@ class RoomsController < ApplicationController
 
     # ページタイトル
     @title = @room.hash_tag
+
+    # Twitterへのリンク用
+    @link_query = @room.search_query.presence || @room.hash_tag
   rescue => ex
     flash.now[:alert] = ex.message
     
@@ -79,7 +82,7 @@ class RoomsController < ApplicationController
     unless room.update_attributes( update_room )
       redirect_to( { action: "edit", id: room.id }, alert: 'Roomの更新に失敗しました。' ) and return
     else
-      redirect_to( { action: "index" } ) and return
+      redirect_to( { action: "show", id: room.id } ) and return
     end
   end
 

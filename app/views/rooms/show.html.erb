@@ -1,7 +1,4 @@
 
-<br />
-<br />
-
 <%= link_to "Tweets", { controller: "tweets", action: 'index', room_id: @room.id } %>
 <% if @room.user_id == session[:user_id] or current_user.is_super? %> | <%= link_to "Edit", { action: 'edit', id: @room.id } %><br /><% end %>
 
@@ -20,7 +17,8 @@
 
 <h3 style="display: inline;">From Twitter</h3><br />
 
-<span id="hash_tag"><%= link_to( @room.hash_tag, "https://twitter.com/#!/search/realtime/#{CGI.escape(@room.hash_tag)}", target: "_blank"  ) %></span><br />
+<%# Twitterへのリンク(検索クエリ) %>
+<span id="hash_tag"><%= link_to( @room.hash_tag, "https://twitter.com/#!/search/realtime/#{CGI.escape(@link_query)} lang:ja", target: "_blank" ) %></span><br />
 
 <%# Tweet検索結果一覧 %>
 <% if @get_tweets.length > 0 %>
@@ -33,7 +31,6 @@
   </tr>
 
 <% @get_tweets.each_with_index{ |tweet, index| %>
-  <%# print "[ tweet ] : " ; p tweet ; %>
   <tr>
     <%# No. %><td><%= (index + 1) %></td>
     <%# User %><td align="center"><%= link_to_unless( tweet.from_user.blank?, image_tag( tweet.profile_image_url, size: "20x20" ), "https://twitter.com/#!/#{tweet.from_user}", target: "_blank", title: tweet.from_user ) %></td>

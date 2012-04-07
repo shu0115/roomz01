@@ -1,7 +1,4 @@
 
-<br />
-<br />
-
 <%= link_to "Room", { controller: "rooms", action: 'show', id: @room.id } %><br />
 
 <h2><%= link_to @room.hash_tag, { action: 'index', room_id: @room.id } %></h2>
@@ -22,9 +19,10 @@
 
   <%# ハッシュタグ前付加 %>
   <% if @room.hash_tag_position == "before" %>
-    <span><%= link_to( @room.hash_tag, "https://twitter.com/#!/search/realtime/#{CGI.escape(@room.hash_tag)}", target: "_blank", id: "hash_tag" ) %></span><br />
+    <%# Twitterへのリンク(ハッシュタグ) %>
+    <span><%= link_to( @room.hash_tag, "https://twitter.com/#!/search/realtime/#{CGI.escape(@room.hash_tag)} lang:ja", target: "_blank", id: "hash_tag" ) %></span><br />
   <% else %>
-  <%= check_box_tag "position_flag", "before", false %><%= label_tag "position_flag", " ハッシュタグを前に付ける" %><br />
+    <%= check_box_tag "position_flag", "before", false %><%= label_tag "position_flag", " ハッシュタグを前に付ける" %><br />
   <% end %>
   
   <%# 投稿テキストエリア %>
@@ -34,7 +32,8 @@
 
   <%# ハッシュタグ後付加 %>
   <% if @room.hash_tag_position == "after" %>
-    <span><%= link_to( @room.hash_tag, "https://twitter.com/#!/search/realtime/#{CGI.escape(@room.hash_tag)}", target: "_blank", id: "hash_tag" ) %></span><br />
+    <%# Twitterへのリンク(ハッシュタグ) %>
+    <span><%= link_to( @room.hash_tag, "https://twitter.com/#!/search/realtime/#{CGI.escape(@room.hash_tag)} lang:ja", target: "_blank", id: "hash_tag" ) %></span><br />
   <% else %>
     <%= check_box_tag "position_flag", "after", false %><%= label_tag "position_flag", " ハッシュタグを後に付ける" %><br />
   <% end %>
@@ -59,7 +58,8 @@
 メンバーズ：<br />
   <% @icon_hash.each_pair{ |key, value| %>
     <% unless value[:image].blank? %>
-      <%= link_to_unless( value[:screen_name].blank?, image_tag( value[:image], size: "20x20" ), "https://twitter.com/#!/#{value[:screen_name]}", target: "_blank", title: value[:screen_name] ) rescue nil %>
+      <%#= link_to_unless( value[:screen_name].blank?, image_tag( value[:image], size: "20x20" ), "https://twitter.com/#!/#{value[:screen_name]}", target: "_blank", title: value[:screen_name] ) rescue nil %>
+      <%= link_to_unless( value[:from_twitter_user_id].blank?, image_tag( value[:image], size: "20x20" ), { action: 'index', room_id: @room_id, twitter_user_id: value[:from_twitter_user_id] }, title: value[:screen_name] ) rescue nil %>
     <% end %>
   <% } %>
 </p>
@@ -76,7 +76,7 @@
     <th>User</th>
     <th>Post</th>
     <th>Time</th>
-    <th></th>
+    <% if @exist_me == true or current_user.is_super? %><th></th><% end %>
   </tr>
 
 <% @tweets.each_with_index{ |tweet, index| %>
@@ -98,7 +98,9 @@
     <td style="white-space: nowrap;"><%= link_to_unless( tweet.created_at.blank?, tweet.created_at.strftime("%Y/%m/%d %H:%M:%S"), "https://twitter.com/#!/#{tweet.from_twitter_user}/status/#{tweet.from_twitter_id}", target: "_blank" )  unless tweet.created_at.blank? %></td>
     
     <%# Delete %>
-    <td><% if session[:user_id] == tweet.user_id or current_user.is_super? %><%= link_to "Delete", { action: 'delete', id: tweet.id, room_id: @room.id }, onClick: "return confirm('「No.#{(index + 1)}」を削除します。よろしいですか？');" %><% end %></td>
+    <% if session[:user_id] == tweet.user_id or current_user.is_super? %>
+      <td><%= link_to "Delete", { action: 'delete', id: tweet.id, room_id: @room.id }, onClick: "return confirm('「No.#{(index + 1)}」を削除します。よろしいですか？');" %></td>
+    <% end %>
   </tr>
 <% } %>
 </table>

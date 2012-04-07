@@ -33,6 +33,8 @@
   <%= link_to "Login", "/auth/#{DEFAULT_PROVIDER}" %>
 <% end %>
 
+<br /><br />
+
 <%# 通知／エラーメッセージ %>
 <% unless flash[:notice].blank? %>
   <p style="color: green;"><%=raw flash[:notice] %></p>

@@ -7,8 +7,20 @@ class TweetsController < ApplicationController
   # index #
   #-------#
   def index
-    @room = Room.where( id: params[:room_id] ).first
-    @tweets = Tweet.where( room_id: params[:room_id] ).order( "created_at DESC" ).includes( :user ).page( params[:page] ).per( PER_PAGE )
+    @room_id = params[:room_id]
+    twitter_user_id = params[:twitter_user_id]
+    
+    @room = Room.where( id: @room_id ).first
+    
+    @tweets = Tweet.where( room_id: @room_id ).order( "created_at DESC" ).includes( :user )
+    
+    # ユーザ指定
+    unless twitter_user_id.blank?
+      @tweets = @tweets.where( from_twitter_user_id: twitter_user_id )
+    end
+    
+    @tweets = @tweets.page( params[:page] ).per( PER_PAGE )
+    @exist_me = @tweets.where( user_id: session[:user_id] ).exists?
     
     @tweet = Tweet.new
     @str_count = @room.hash_tag.length + 1
@@ -17,6 +29,15 @@ class TweetsController < ApplicationController
     if @room.worker_flag == true
       Tweet.absorb_tweets( @room )
     end
+    
+    # アイコン配列生成用
+    @icon_hash = Tweet.get_user_icons( @room )
+
+    # ページタイトル
+    @title = @room.hash_tag
+  rescue => ex
+    flash[:notice] = ""
+    flash.now[:alert] = ex.message
     
     # アイコン配列生成用
     @icon_hash = Tweet.get_user_icons( @room )
@@ -73,7 +94,7 @@ class TweetsController < ApplicationController
       end
     end
     
-    redirect_to( action: "index", room_id: room_id ) and return
+    redirect_to( { action: "index", room_id: room_id }, notice: "投稿が完了しました。" ) and return
   rescue => ex
     flash[:notice] = ""
     flash[:alert] = ex.message
