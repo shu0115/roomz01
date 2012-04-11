@@ -48,14 +48,19 @@
     <tr>
       <% batch_column = row.split("|") %>
       <%# 列ループ %>
-      <%# batch_column.each{ |result| %>
       <td style="white-space: nowrap;"><%= link_to batch_column[1], { controller: "tweets", action: "index", room_id: batch_column[0] }, target: "_blank" %></td>
       <td style="white-space: nowrap;"><%= batch_column[4] %></td>
       <td style="white-space: nowrap;"><%= batch_column[2] %></td>
       <td style="white-space: nowrap;"><%= batch_column[3] %></td>
-      <%# } %>
     </tr>
     <% } %>
+    
+    <% if batch_row.blank? %>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    <% end %>
   </tr>
 <% } %>
 
