@@ -43,13 +43,13 @@ ActiveRecord::Schema.define(:version => 20120411151706) do
     t.integer  "user_id"
     t.integer  "room_id"
     t.text     "post"
-    t.datetime "created_at",                            :null => false
-    t.datetime "updated_at",                            :null => false
-    t.text     "from_twitter_image_url", :limit => 255
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
+    t.string   "from_twitter_image_url", :limit => 1024
     t.integer  "from_twitter_id",        :limit => 8
     t.integer  "from_twitter_user_id",   :limit => 8
     t.string   "from_twitter_user"
-    t.text     "user_image_url",         :limit => 255
+    t.string   "user_image_url",         :limit => 1024
   end
 
   create_table "users", :force => true do |t|
