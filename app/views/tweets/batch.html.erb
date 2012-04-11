@@ -42,7 +42,7 @@
     <td style="white-space: nowrap;" rowspan="<%= room_count %>"><%= batch.total_count %></td>
     
     <%# Result %>
-    <% batch_row = batch.result.split("\n") %>
+    <% batch_row = batch.result.to_s.split("\n") %>
     <%# 行ループ %>
     <% batch_row.each{ |row| %>
     <tr>
