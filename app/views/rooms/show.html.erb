@@ -18,7 +18,7 @@
 <h3 style="display: inline;">From Twitter</h3><br />
 
 <%# Twitterへのリンク(検索クエリ) %>
-<span id="hash_tag"><%= link_to( @room.hash_tag, "https://twitter.com/#!/search/realtime/#{CGI.escape(@link_query)} lang:ja", target: "_blank" ) %></span><br />
+<span id="hash_tag"><%= link_to( @room.hash_tag, "https://twitter.com/#!/search/realtime/#{CGI.escape(@link_query)}", target: "_blank" ) %></span><br />
 
 <%# Tweet検索結果一覧 %>
 <% if @get_tweets.length > 0 %>

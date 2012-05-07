@@ -48,7 +48,7 @@ class Tweet < ActiveRecord::Base
     
     param_hash[:search_query] = room.search_query.presence || room.hash_tag
     param_hash[:options] = Hash.new
-    param_hash[:options][:lang] = "ja"
+#    param_hash[:options][:lang] = "ja"
     param_hash[:options][:result_type] = "recent"
     param_hash[:options][:rpp] = 100
     param_hash[:options][:page] = 1
@@ -69,7 +69,8 @@ class Tweet < ActiveRecord::Base
     # 取得データが無くなるまでループ
     loop do
       # ツイートを取得
-      get_tweets = Twitter.search( "#{search_query}", lang: "ja", result_type: "recent", since_id: room.last_max_id.to_i, rpp: per_page, page: page )
+#      get_tweets = Twitter.search( "#{search_query}", lang: "ja", result_type: "recent", since_id: room.last_max_id.to_i, rpp: per_page, page: page )
+      get_tweets = Twitter.search( "#{search_query}", result_type: "recent", since_id: room.last_max_id.to_i, rpp: per_page, page: page )
 
       get_tweets.each{ |tweet|
         # ツイートが既に登録済みで無ければ
@@ -143,7 +144,8 @@ class Tweet < ActiveRecord::Base
       # 取得データが無くなるまでループ
       loop do
         # ツイートを取得
-        get_tweets = Twitter.search( "#{search_query}", lang: "ja", result_type: "recent", since_id: room.last_max_id.to_i, rpp: per_page, page: page )
+#        get_tweets = Twitter.search( "#{search_query}", lang: "ja", result_type: "recent", since_id: room.last_max_id.to_i, rpp: per_page, page: page )
+        get_tweets = Twitter.search( "#{search_query}", result_type: "recent", since_id: room.last_max_id.to_i, rpp: per_page, page: page )
 
         get_tweets.each{ |tweet|
           # ツイートが既に登録済みで無ければ

@@ -22,7 +22,8 @@ class RoomsController < ApplicationController
     
     # Twitterから取得
     get_twitter_hash = Tweet.get_twitter_param( @room )
-    @get_tweets = Twitter.search( get_twitter_hash[:search_query], lang: get_twitter_hash[:options][:lang], result_type: get_twitter_hash[:options][:result_type], rpp: get_twitter_hash[:options][:rpp], page: get_twitter_hash[:options][:page] )
+#    @get_tweets = Twitter.search( get_twitter_hash[:search_query], lang: get_twitter_hash[:options][:lang], result_type: get_twitter_hash[:options][:result_type], rpp: get_twitter_hash[:options][:rpp], page: get_twitter_hash[:options][:page] )
+    @get_tweets = Twitter.search( get_twitter_hash[:search_query], result_type: get_twitter_hash[:options][:result_type], rpp: get_twitter_hash[:options][:rpp], page: get_twitter_hash[:options][:page] )
 
     # アイコン配列生成用
     @icon_hash = Tweet.get_user_icons_from_tweet( @get_tweets )
