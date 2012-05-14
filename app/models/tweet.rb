@@ -108,6 +108,7 @@ class Tweet < ActiveRecord::Base
   # self.run_get_tweet #
   #--------------------#
   # バッチ呼び出し
+  # bundle exec ruby script/rails runner "Tweet.run_get_tweet"
   def self.run_get_tweet
     Tweet.get_all_room_tweet
   end
@@ -130,9 +131,9 @@ class Tweet < ActiveRecord::Base
     # Roomループ
     rooms.each{ |room|
       batch_log.result ||= ""
-      batch_log.result += "#{room.id}|"
-      batch_log.result += "#{room.hash_tag}|"
-      batch_log.result += "#{Time.now.strftime("%Y/%m/%d %H:%M:%S")}|"
+      result_room_id = "#{room.id}|"
+      result_hash_tag = "#{room.hash_tag}|"
+      result_start_at = "#{Time.now.strftime("%Y/%m/%d %H:%M:%S")}|"
       
       page = 1
       per_page = 100
@@ -144,9 +145,9 @@ class Tweet < ActiveRecord::Base
       # 取得データが無くなるまでループ
       loop do
         # ツイートを取得
-#        get_tweets = Twitter.search( "#{search_query}", lang: "ja", result_type: "recent", since_id: room.last_max_id.to_i, rpp: per_page, page: page )
-        get_tweets = Twitter.search( "#{search_query}", result_type: "recent", since_id: room.last_max_id.to_i, rpp: per_page, page: page )
-
+#        get_tweets = Twitter.search( "#{search_query}", result_type: "recent", since_id: room.last_max_id.to_i, rpp: per_page, page: page )
+        get_tweets = Twitter.search( "#{search_query}", result_type: "recent", since_id: 1, rpp: per_page, page: page )
+        
         get_tweets.each{ |tweet|
           # ツイートが既に登録済みで無ければ
           unless Tweet.where( room_id: room.id, from_twitter_id: tweet.id ).exists?
@@ -180,8 +181,14 @@ class Tweet < ActiveRecord::Base
           end
         
           batch_log.total_count += total_count
-          batch_log.result += "#{Time.now.strftime("%Y/%m/%d %H:%M:%S")}|"
-          batch_log.result += "#{total_count}|\n"
+          
+          if total_count > 0
+            batch_log.result += result_room_id
+            batch_log.result += result_hash_tag
+            batch_log.result += "#{total_count}|"
+            batch_log.result += result_start_at
+            batch_log.result += "#{Time.now.strftime("%Y/%m/%d %H:%M:%S")}|\n"
+          end
           
           # ループを抜ける
           break 
