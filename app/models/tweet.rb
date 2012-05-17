@@ -197,6 +197,8 @@ class Tweet < ActiveRecord::Base
         end
       rescue => ex
         batch_log.result = ""
+        batch_log.result += result_room_id
+        batch_log.result += result_hash_tag
         batch_log.result += "ERROR|"
         batch_log.result += "#{ex.message}|\n"
       end
