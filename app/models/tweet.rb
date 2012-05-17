@@ -108,7 +108,7 @@ class Tweet < ActiveRecord::Base
   # self.run_get_tweet #
   #--------------------#
   # バッチ呼び出し
-  # bundle exec ruby script/rails runner "Tweet.run_get_tweet"
+  # [ bundle exec ruby script/rails runner "Tweet.run_get_tweet" ]
   def self.run_get_tweet
     Tweet.get_all_room_tweet
   end
@@ -141,58 +141,64 @@ class Tweet < ActiveRecord::Base
       search_query = room.search_query.presence || room.hash_tag
       total_count = 0
       batch_log.total_count ||= 0
-      
-      # 取得データが無くなるまでループ
-      loop do
-        # ツイートを取得
-#        get_tweets = Twitter.search( "#{search_query}", result_type: "recent", since_id: room.last_max_id.to_i, rpp: per_page, page: page )
-        get_tweets = Twitter.search( "#{search_query}", result_type: "recent", since_id: 1, rpp: per_page, page: page )
         
-        get_tweets.each{ |tweet|
-          # ツイートが既に登録済みで無ければ
-          unless Tweet.where( room_id: room.id, from_twitter_id: tweet.id ).exists?
-            # ツイートを登録
-            add_tweet = Tweet.new
-            add_tweet.room_id = room.id
-            add_tweet.user_id = User.where( uid: tweet.from_user_id.to_s ).first.try(:id)
-            add_tweet.post = tweet.text
-            add_tweet.from_twitter_id = tweet.id
-            add_tweet.from_twitter_user_id = tweet.from_user_id
-            add_tweet.from_twitter_user = tweet.from_user
-            add_tweet.user_image_url = tweet.profile_image_url
-            add_tweet.created_at = tweet.created_at
+      begin
+        # 取得データが無くなるまでループ
+        loop do
+          # ツイートを取得
+  #        get_tweets = Twitter.search( "#{search_query}", result_type: "recent", since_id: room.last_max_id.to_i, rpp: per_page, page: page )
+          get_tweets = Twitter.search( "#{search_query}", result_type: "recent", since_id: 1, rpp: per_page, page: page )
+          
+          get_tweets.each{ |tweet|
+            # ツイートが既に登録済みで無ければ
+            unless Tweet.where( room_id: room.id, from_twitter_id: tweet.id ).exists?
+              # ツイートを登録
+              add_tweet = Tweet.new
+              add_tweet.room_id = room.id
+              add_tweet.user_id = User.where( uid: tweet.from_user_id.to_s ).first.try(:id)
+              add_tweet.post = tweet.text
+              add_tweet.from_twitter_id = tweet.id
+              add_tweet.from_twitter_user_id = tweet.from_user_id
+              add_tweet.from_twitter_user = tweet.from_user
+              add_tweet.user_image_url = tweet.profile_image_url
+              add_tweet.created_at = tweet.created_at
+              
+              if add_tweet.save
+                total_count += 1
+              end
+              
+              # max_id更新
+              last_max_id = tweet.id if last_max_id < tweet.id
+            end
+          }
+          
+          page += 1
+          
+          # 取得ツイートが無ければ
+          if get_tweets.blank?
+            # MaxIDを更新(1より大きくなっていれば)
+            if last_max_id > 1
+              room.update_attributes( last_max_id: last_max_id )
+            end
+          
+            batch_log.total_count += total_count
             
-            if add_tweet.save
-              total_count += 1
+            if total_count > 0
+              batch_log.result += result_room_id
+              batch_log.result += result_hash_tag
+              batch_log.result += "#{total_count}|"
+              batch_log.result += result_start_at
+              batch_log.result += "#{Time.now.strftime("%Y/%m/%d %H:%M:%S")}|\n"
             end
             
-            # max_id更新
-            last_max_id = tweet.id if last_max_id < tweet.id
+            # ループを抜ける
+            break 
           end
-        }
-        
-        page += 1
-        
-        # 取得ツイートが無ければ
-        if get_tweets.blank?
-          # MaxIDを更新(1より大きくなっていれば)
-          if last_max_id > 1
-            room.update_attributes( last_max_id: last_max_id )
-          end
-        
-          batch_log.total_count += total_count
-          
-          if total_count > 0
-            batch_log.result += result_room_id
-            batch_log.result += result_hash_tag
-            batch_log.result += "#{total_count}|"
-            batch_log.result += result_start_at
-            batch_log.result += "#{Time.now.strftime("%Y/%m/%d %H:%M:%S")}|\n"
-          end
-          
-          # ループを抜ける
-          break 
         end
+      rescue => ex
+        batch_log.result = ""
+        batch_log.result += "ERROR|"
+        batch_log.result += "#{ex.message}|\n"
       end
     }
     
