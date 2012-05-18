@@ -12,6 +12,11 @@ class TweetsController < ApplicationController
     
     @room = Room.where( id: @room_id ).first
     
+    # ルームが無ければリダイレクト
+    if @room.blank?
+      redirect_to( { controller: "rooms", action: "index" }, alert: "指定されたルームは存在しません。" ) and return
+    end
+    
     @tweets = Tweet.where( room_id: @room_id ).order( "created_at DESC" ).includes( :user )
     
     # ユーザ指定

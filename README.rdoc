@@ -6,10 +6,10 @@ Room for Tweet.
 
 === リポジトリをローカルへ作成
 
-  $ cd (作業ディレクトリ)
+  cd (作業ディレクトリ)
 
-  $ git clone git@github.com:shu0115/roomz01.git roomz
-  $ cd roomz
+  git clone git@github.com:shu0115/roomz01.git roomz
+  cd roomz
 
 === Twitterアプリ登録
 
@@ -26,7 +26,7 @@ https://dev.twitter.com/apps/new
 
 === ローカル用Twitterキー設定
 
-  $ vi config/initializers/local_setting.rb
+  vi config/initializers/local_setting.rb
   -----
   # Twitter OAuth Local Setting
   ENV['TWITTER_KEY'] = "YOUR_CONSUMER_KEY"
@@ -38,9 +38,9 @@ https://dev.twitter.com/apps/new
 
 === Rails起動
 
-  $ bundle install
-  $ rake db:migrate
-  $ rails s
+  bundle install --without production
+  rake db:migrate
+  rails s
 
 = Copyright
 

@@ -18,6 +18,12 @@ class RoomsController < ApplicationController
     room_id = params[:id]
     
     @room = Room.where( id: room_id ).first
+    
+    # ルームが無ければリダイレクト
+    if @room.blank?
+      redirect_to( { action: "index" }, alert: "指定されたルームは存在しません。" ) and return
+    end
+    
     @tweets = Tweet.where( room_id: room_id ).order( "created_at DESC" ).includes( :user )
     
     # Twitterから取得
@@ -51,6 +57,11 @@ class RoomsController < ApplicationController
     else
       @room = Room.where( user_id: session[:user_id], id: params[:id] ).first
     end
+    
+    # ルームが無ければリダイレクト
+    if @room.blank?
+      redirect_to( { action: "index" }, alert: "指定されたルームは存在しません。" ) and return
+    end
 
     # ページタイトル
     @title = @room.hash_tag
@@ -83,6 +94,11 @@ class RoomsController < ApplicationController
     else
       room = Room.where( id: params[:id], user_id: session[:user_id] ).first
     end
+    
+    # ルームが無ければリダイレクト
+    if room.blank?
+      redirect_to( { action: "index" }, alert: "指定されたルームは存在しません。" ) and return
+    end
 
     unless room.update_attributes( update_room )
       redirect_to( { action: "edit", id: room.id }, alert: 'Roomの更新に失敗しました。' ) and return
@@ -101,6 +117,11 @@ class RoomsController < ApplicationController
       room = Room.where( id: params[:id], user_id: session[:user_id] ).first
     end
     
+    # ルームが無ければリダイレクト
+    if room.blank?
+      redirect_to( { action: "index" }, alert: "指定されたルームは存在しません。" ) and return
+    end
+
     room.destroy
 
     redirect_to( action: "index" ) and return

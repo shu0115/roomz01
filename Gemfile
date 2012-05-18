@@ -37,9 +37,10 @@ gem 'jquery-rails'
 # gem 'ruby-debug19', :require => 'ruby-debug'
 
 # For Heroku
+gem 'thin'
+
 group :production do
   gem 'pg'
-  gem 'thin'
 end
 
 # OmniAuth
@@ -54,4 +55,5 @@ gem "rails_autolink", "~> 1.0.4"
 # Paging
 gem 'kaminari'
 
+# For Debug
 gem 'tapp'
