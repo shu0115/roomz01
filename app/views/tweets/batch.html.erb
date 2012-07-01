@@ -22,27 +22,28 @@
   <tr>
     <%# No. %>
     <td style="white-space: nowrap;" rowspan="<%= room_count %>"><%= (index + 1) %></td>
-    
+
     <%# Name %>
     <% if false %><td><%= batch.name %></td><% end %>
-    
+
     <%# Description %>
     <td style="white-space: nowrap;" rowspan="<%= room_count %>"><%= batch.description %></td>
-    
+
     <%# StartAt／EndAt %>
     <td style="white-space: nowrap;" rowspan="<%= room_count %>">
       <%= batch.start_at.strftime("%Y/%m/%d %H:%M:%S") unless batch.start_at.blank? %><br />
       <%= batch.end_at.strftime("%Y/%m/%d %H:%M:%S") unless batch.end_at.blank? %>
     </td>
-    
+
     <%# ProcessTime %>
     <td style="white-space: nowrap;" rowspan="<%= room_count %>"><%= sprintf( "%.3f", batch.process_time.to_f ) %></td>
-    
+
     <%# TotalCount %>
     <td style="white-space: nowrap;" rowspan="<%= room_count %>"><%= batch.total_count %></td>
-    
+
     <%# Result %>
     <% batch_row = batch.result.to_s.split("\n") %>
+
     <%# 行ループ %>
     <% batch_row.each{ |row| %>
     <tr>
@@ -54,7 +55,7 @@
       <td style="white-space: nowrap;"><%= batch_column[3] %></td>
     </tr>
     <% } %>
-    
+
     <% if batch_row.blank? %>
       <td></td>
       <td></td>
